@@ -16,16 +16,11 @@ import org.bukkit.plugin.Plugin;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
 import org.mcsg.survivalgames.api.PlayerJoinArenaEvent;
 import org.mcsg.survivalgames.api.PlayerKilledEvent;
-import org.mcsg.survivalgames.api.PlayerLeaveArenaEvent;
 import org.mcsg.survivalgames.hooks.HookManager;
 import org.mcsg.survivalgames.logging.QueueManager;
 import org.mcsg.survivalgames.stats.StatsManager;
 import org.mcsg.survivalgames.util.ItemReader;
 import org.mcsg.survivalgames.util.Kit;
-
-import com.sk89q.wepif.PluginPermissionsResolver;
-
-
 
 //Data container for a game
 
@@ -519,8 +514,6 @@ public class Game {
 		}
 
 		HookManager.getInstance().runHook("PLAYER_REMOVED", "player-"+p.getName());
-
-		PlayerLeaveArenaEvent pl = new PlayerLeaveArenaEvent(p, this, b);
 
 		LobbyManager.getInstance().updateWall(gameID);
 	}

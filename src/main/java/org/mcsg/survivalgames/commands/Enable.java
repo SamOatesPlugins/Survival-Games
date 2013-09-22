@@ -1,6 +1,5 @@
 package org.mcsg.survivalgames.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.MessageManager;
@@ -8,8 +7,6 @@ import org.mcsg.survivalgames.Game.GameMode;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.SettingsManager;
-
-
 
 public class Enable implements SubCommand{
 

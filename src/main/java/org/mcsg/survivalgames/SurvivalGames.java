@@ -20,7 +20,6 @@ import org.mcsg.survivalgames.logging.LoggingManager;
 import org.mcsg.survivalgames.logging.QueueManager;
 import org.mcsg.survivalgames.stats.StatsManager;
 import org.mcsg.survivalgames.util.ChestRatioStorage;
-import org.mcsg.survivalgames.util.ChestRatioStorageOLD;
 import org.mcsg.survivalgames.util.DatabaseManager;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
