@@ -59,7 +59,7 @@ public class Game {
 	private StatsManager sm = StatsManager.getInstance();
 	private HashMap < String, String > hookvars = new HashMap < String, String > ();
 	private MessageManager msgmgr = MessageManager.getInstance();
-
+	private GameScoreboard scoreBoard = null;
 
 	public Game(int gameid) {
 		gameID = gameid;
@@ -104,6 +104,8 @@ public class Game {
 		hookvars.put("activeplayers", "0");
 
 		mode = GameMode.WAITING;
+		
+		scoreBoard = new GameScoreboard(gameID);
 	}
 
 	public void reloadFlags() {
@@ -170,6 +172,8 @@ public class Game {
 		LobbyManager.getInstance().updateWall(gameID);
 
 		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamewaiting", "arena-"+gameID);
+		
+		scoreBoard.reset();
 
 	}
 
@@ -232,6 +236,8 @@ public class Game {
 						p.setHealth(p.getMaxHealth());p.setFoodLevel(20);clearInv(p);
 
 						activePlayers.add(p);sm.addPlayer(p, gameID);
+						
+						scoreBoard.addPlayer(p);
 
 						hookvars.put("activeplayers", activePlayers.size()+"");
 						LobbyManager.getInstance().updateWall(gameID);
@@ -504,6 +510,7 @@ public class Game {
 		} else {
 			sm.removePlayer(p, gameID);
 			//	if (!b) p.teleport(SettingsManager.getInstance().getLobbySpawn());
+			scoreBoard.removePlayer(p);
 			restoreInv(p);
 			activePlayers.remove(p);
 			inactivePlayers.remove(p);
@@ -516,10 +523,6 @@ public class Game {
 		HookManager.getInstance().runHook("PLAYER_REMOVED", "player-"+p.getName());
 
 		LobbyManager.getInstance().updateWall(gameID);
-	}
-
-	public void playerLeave(Player p) {
-
 	}
 
 	/*
@@ -542,6 +545,8 @@ public class Game {
 
 			if (!activePlayers.contains(p)) return;
 			else restoreInv(p);
+			
+			scoreBoard.removePlayer(p);
 
 			activePlayers.remove(p);
 			inactivePlayers.add(p);
@@ -639,6 +644,7 @@ public class Game {
 		// clearInv(p);
 		win.teleport(SettingsManager.getInstance().getLobbySpawn());
 		restoreInv(win);
+		scoreBoard.removePlayer(p);
 		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin","arena-"+gameID, "victim-"+p.getName(), "player-"+win.getName());
 		LobbyManager.getInstance().display(new String[] {
 				win.getName(), "", "Won the ", "Survival Games!"
@@ -685,6 +691,7 @@ public class Game {
 	public void disable() {
 		disabled = true;
 		spawns.clear();
+		scoreBoard.reset();
 
 		for (int a = 0; a < activePlayers.size(); a = 0) {
 			try {
@@ -740,6 +747,8 @@ public class Game {
 		GameManager.getInstance().gameEndCallBack(gameID);
 		QueueManager.getInstance().rollback(gameID, false);
 		LobbyManager.getInstance().updateWall(gameID);
+		
+		scoreBoard.reset();
 
 	}
 
