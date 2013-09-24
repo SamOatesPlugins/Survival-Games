@@ -67,7 +67,7 @@ public class CommandHandler implements CommandExecutor {
 		
 		// staff commands
 		commands.put("disable", new Disable());
-		commands.put("start", new ForceStart());
+		commands.put("forcestart", new ForceStart());
 		commands.put("enable", new Enable());
 		
 		// admin commands	
@@ -95,7 +95,7 @@ public class CommandHandler implements CommandExecutor {
 		
 		// staff commands
 		helpinfo.put("disable", CommandGroup.Staff);
-		helpinfo.put("start", CommandGroup.Staff);
+		helpinfo.put("forcestart", CommandGroup.Staff);
 		helpinfo.put("enable", CommandGroup.Staff);
 		
 		// admin commands	

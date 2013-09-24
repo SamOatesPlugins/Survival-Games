@@ -52,7 +52,7 @@ public class ForceStart implements SubCommand {
 
 	@Override
 	public String help(Player p) {
-		return "/sg forcestart - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.forcestart", "Forces the game to start");
+		return "/sg forcestart [id] [time] - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.forcestart", "Forces the game to start");
 	}
 
 	@Override
