@@ -35,14 +35,22 @@ import org.mcsg.survivalgames.commands.Teleport;
 import org.mcsg.survivalgames.commands.Vote;
 
 public class CommandHandler implements CommandExecutor {
+	
+	private enum CommandGroup {
+		Player,
+		Staff,
+		Admin
+	}
+	
 	private Plugin plugin;
-	private HashMap < String, SubCommand > commands;
-	private HashMap < String, Integer > helpinfo;
+	private HashMap<String, SubCommand> commands;
+	private HashMap<String, CommandGroup> helpinfo;
 	private MessageManager msgmgr = MessageManager.getInstance();
+	
 	public CommandHandler(Plugin plugin) {
 		this.plugin = plugin;
-		commands = new HashMap < String, SubCommand > ();
-		helpinfo = new HashMap < String, Integer > ();
+		commands = new HashMap<String, SubCommand>();
+		helpinfo = new HashMap<String, CommandGroup>();
 		loadCommands();
 		loadHelpInfo();
 	}
@@ -64,7 +72,7 @@ public class CommandHandler implements CommandExecutor {
 		commands.put("delarena", new DelArena());
 		commands.put("flag", new Flag());
 		commands.put("spectate", new Spectate());
-		commands.put("lq", new LeaveQueue());
+		commands.put("leavequeue", new LeaveQueue());
 		commands.put("leavequeue", new LeaveQueue());
 		commands.put("list", new ListPlayers());
 		commands.put("tp", new Teleport());
@@ -72,29 +80,28 @@ public class CommandHandler implements CommandExecutor {
 	}
 
 	private void loadHelpInfo() {
-		//you can do this by iterating thru the hashmap from a certian index btw instead of using a new hashmap,
-		//plus, instead of doing three differnet ifs, just iterate thru and check if the value == the page
-		helpinfo.put("createarena", 3);
-		helpinfo.put("join", 1);
-		helpinfo.put("addwall", 3);
-		helpinfo.put("setspawn", 3);
-		helpinfo.put("listarenas", 3);
-		helpinfo.put("disable", 2);
-		helpinfo.put("start", 2);
-		helpinfo.put("enable", 2);
-		helpinfo.put("vote", 1);
-		helpinfo.put("leave", 1);
-		helpinfo.put("setlobbyspawn", 3);
-		helpinfo.put("resetspawns", 3);
-		helpinfo.put("delarena", 3);
-		helpinfo.put("flag", 3);
-		helpinfo.put("spectate", 1);
-		helpinfo.put("lq", 1);
-		helpinfo.put("leavequeue", 1);
-		helpinfo.put("list", 1);
-		commands.put("reload", new Reload());
-
-		//helpinfo.put("sponsor", 1);
+		// player commands
+		helpinfo.put("join", CommandGroup.Player);
+		helpinfo.put("vote", CommandGroup.Player);
+		helpinfo.put("leave", CommandGroup.Player);
+		helpinfo.put("spectate", CommandGroup.Player);
+		helpinfo.put("leavequeue", CommandGroup.Player);
+		helpinfo.put("list", CommandGroup.Player);
+		
+		// staff commands
+		helpinfo.put("disable", CommandGroup.Staff);
+		helpinfo.put("start", CommandGroup.Staff);
+		helpinfo.put("enable", CommandGroup.Staff);
+		
+		// admin commands	
+		helpinfo.put("createarena", CommandGroup.Admin);
+		helpinfo.put("addwall", CommandGroup.Admin);
+		helpinfo.put("setspawn", CommandGroup.Admin);
+		helpinfo.put("listarenas", CommandGroup.Admin);
+		helpinfo.put("setlobbyspawn", CommandGroup.Admin);
+		helpinfo.put("resetspawns", CommandGroup.Admin);
+		helpinfo.put("delarena", CommandGroup.Admin);
+		helpinfo.put("flag", CommandGroup.Admin);
 	}
 
 	@Override
@@ -119,29 +126,29 @@ public class CommandHandler implements CommandExecutor {
 
 		if (cmd1.getName().equalsIgnoreCase("survivalgames")) {
 			if (args == null || args.length < 1) {
-				msgmgr.sendMessage(PrefixType.INFO, "Version " + pdfFile.getVersion() + " by Double0negative", player);
+				msgmgr.sendMessage(PrefixType.INFO, "Version " + pdfFile.getVersion(), player);
 				msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for command information", player);
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("help")) {
 				if (args.length == 1) {
-					help(player, 1);
+					msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for command information", player);
 				}
 				else {
 					if (args[1].toLowerCase().startsWith("player")) {
-						help(player, 1);
+						help(player, CommandGroup.Player);
 						return true;
 					}
 					if (args[1].toLowerCase().startsWith("staff")) {
-						help(player, 2);
+						help(player, CommandGroup.Staff);
 						return true;
 					}
 					if (args[1].toLowerCase().startsWith("admin")) {
-						help(player, 3);
+						help(player, CommandGroup.Admin);
 						return true;
 					}
 					else {
-						msgmgr.sendMessage(PrefixType.WARNING, args[1] + " is not a valid page! Valid pages are Player, Staff, and Admin.", player);
+						msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for command information", player);
 					}
 				}
 				return true;
@@ -168,35 +175,24 @@ public class CommandHandler implements CommandExecutor {
 		return false;
 	}
 
-	public void help (Player p, int page) {
-		if (page == 1) {
+	public void help (Player p, CommandGroup group) {
+		if (group == CommandGroup.Player) {
 			p.sendMessage(ChatColor.BLUE + "------------ " + msgmgr.pre + ChatColor.DARK_AQUA + " Player Commands" + ChatColor.BLUE + " ------------");
 		}
-		if (page == 2) {
+		if (group == CommandGroup.Staff) {
 			p.sendMessage(ChatColor.BLUE + "------------ " + msgmgr.pre + ChatColor.DARK_AQUA + " Staff Commands" + ChatColor.BLUE + " ------------");
 		}
-		if (page == 3) {
+		if (group == CommandGroup.Admin) {
 			p.sendMessage(ChatColor.BLUE + "------------ " + msgmgr.pre + ChatColor.DARK_AQUA + " Admin Commands" + ChatColor.BLUE + " ------------");
 		}
 
 		for (String command : commands.keySet()) {
 			try{
-				if (helpinfo.get(command) == page) {
+				if (helpinfo.get(command) == group) {
 
 					msgmgr.sendMessage(PrefixType.INFO, commands.get(command).help(p), p);
 				}
 			}catch(Exception e){}
 		}
-		/*for (SubCommand v : commands.values()) {
-            if (v.permission() != null) {
-                if (p.hasPermission(v.permission())) {
-                    msgmgr.sendMessage(PrefixType.INFO1, v.help(p), p);
-                } else {
-                    msgmgr.sendMessage(PrefixType.WARNING, v.help(p), p);
-                }
-            } else {
-                msgmgr.sendMessage(PrefixType.INFO, v.help(p), p);
-            }
-        }*/
 	}
 }
