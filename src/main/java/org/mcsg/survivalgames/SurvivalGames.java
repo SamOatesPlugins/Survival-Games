@@ -107,7 +107,6 @@ public class SurvivalGames extends JavaPlugin {
 			pm.registerEvents(new DeathEvent(), p);
 			pm.registerEvents(new MoveEvent(), p);
 			pm.registerEvents(new CommandCatch(), p);
-			pm.registerEvents(new SignClickEvent(), p);
 			pm.registerEvents(new ChestReplaceEvent(), p);
 			pm.registerEvents(new LogoutEvent(), p);
 			pm.registerEvents(new JoinEvent(p), p);

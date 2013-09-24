@@ -1,6 +1,5 @@
 package org.mcsg.survivalgames.lobbysigns;
 
-import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
