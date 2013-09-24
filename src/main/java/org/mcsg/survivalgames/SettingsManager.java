@@ -362,6 +362,8 @@ public class SettingsManager {
 
 		}
 		GameManager.getInstance().getGame(gameid).addSpawn();
+		
+		LobbyManager.getInstance().updateWall(gameid);
 
 	}
 
