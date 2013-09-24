@@ -106,7 +106,7 @@ public class GameScoreboard {
             	gameObjective.getScore(player).setScore(0);
             	gameObjective.setDisplayName("SG Arena (" + noofPlayers + "/24)");
             }
-        }, 30L);
+        }, 1L);
 		
 	}
 	
@@ -135,7 +135,7 @@ public class GameScoreboard {
             public void run() {
             	gameObjective.setDisplayName("SG Arena (" + noofPlayers + "/24)");
             }
-        }, 30L);
+        }, 1L);
 		
 	}
 
