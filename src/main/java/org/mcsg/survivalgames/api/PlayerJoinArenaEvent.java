@@ -6,8 +6,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.mcsg.survivalgames.Game;
 
-
-
 public class PlayerJoinArenaEvent extends Event implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();

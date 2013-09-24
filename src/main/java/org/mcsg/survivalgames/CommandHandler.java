@@ -52,7 +52,7 @@ public class CommandHandler implements CommandExecutor {
 		commands.put("join", new Join());
 		commands.put("addwall", new AddWall());
 		commands.put("setspawn", new SetSpawn());
-		commands.put("getcount", new ListArenas());
+		commands.put("listarenas", new ListArenas());
 		commands.put("disable", new Disable());
 		commands.put("start", new ForceStart());
 		commands.put("enable", new Enable());
@@ -78,7 +78,7 @@ public class CommandHandler implements CommandExecutor {
 		helpinfo.put("join", 1);
 		helpinfo.put("addwall", 3);
 		helpinfo.put("setspawn", 3);
-		helpinfo.put("getcount", 3);
+		helpinfo.put("listarenas", 3);
 		helpinfo.put("disable", 2);
 		helpinfo.put("start", 2);
 		helpinfo.put("enable", 2);
