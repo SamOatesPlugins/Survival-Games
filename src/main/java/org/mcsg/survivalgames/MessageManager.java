@@ -69,7 +69,6 @@ public class MessageManager {
 	 */
 	
 	public void sendMessage(PrefixType type, String msg, Player player){
-		msg = SettingsManager.getInstance().getMessageConfig().getString("messages."+msg, msg);
 		player.sendMessage(prefix.get(PrefixType.MAIN)+ " "+prefix.get(type)+ msg );
 	}
 	

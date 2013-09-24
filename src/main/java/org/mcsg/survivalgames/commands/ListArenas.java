@@ -15,7 +15,7 @@ public class ListArenas implements SubCommand{
     public boolean onCommand(Player player, String[] args) {
     	StringBuilder arenas = new StringBuilder();
     	try{
-    	if(args.length == 0 || Integer.parseInt(args[0]) < 0 || Integer.parseInt(args[0]) > GameManager.getInstance().getGameCount()){
+    	if(args.length != 0 && Integer.parseInt(args[0]) < 0 || Integer.parseInt(args[0]) > GameManager.getInstance().getGameCount()){
     		MessageManager.getInstance().sendMessage(PrefixType.ERROR, "error.gamenoexist", player);
     	}
     	if (GameManager.getInstance().getGames().isEmpty()) {

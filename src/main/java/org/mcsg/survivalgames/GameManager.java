@@ -323,6 +323,9 @@ public class GameManager {
 
 	public String getStringList(int gid){
 		Game g = getGame(gid);
+		if (g == null)
+			return null;
+		
 		StringBuilder sb = new StringBuilder();
 		Player[][]players = g.getPlayers();
 
