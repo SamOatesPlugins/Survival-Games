@@ -14,7 +14,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Vector;
 
 public class SettingsManager {
 
@@ -316,9 +315,12 @@ public class SettingsManager {
 	public Location getLobbySpawn() {
 		try{
 			return new Location(Bukkit.getWorld(system.getString("sg-system.lobby.spawn.world")),
-				system.getInt("sg-system.lobby.spawn.x"),
-				system.getInt("sg-system.lobby.spawn.y"),
-				system.getInt("sg-system.lobby.spawn.z"));
+				system.getDouble("sg-system.lobby.spawn.x"),
+				system.getDouble("sg-system.lobby.spawn.y"),
+				system.getDouble("sg-system.lobby.spawn.z"),
+				(float)system.getDouble("sg-system.lobby.spawn.yaw"),
+				(float)system.getDouble("sg-system.lobby.spawn.pitch")
+				);
 		}catch(Exception e){
 			return null;
 		}
@@ -326,23 +328,31 @@ public class SettingsManager {
 
 	public Location getSpawnPoint(int gameid, int spawnid) {
 		return new Location(getGameWorld(gameid),
-				spawns.getInt("spawns." + gameid + "." + spawnid + ".x"),
-				spawns.getInt("spawns." + gameid + "." + spawnid + ".y"),
-				spawns.getInt("spawns." + gameid + "." + spawnid + ".z"));
+				spawns.getDouble("spawns." + gameid + "." + spawnid + ".x"),
+				spawns.getDouble("spawns." + gameid + "." + spawnid + ".y"),
+				spawns.getDouble("spawns." + gameid + "." + spawnid + ".z"),
+				(float)spawns.getDouble("spawns." + gameid + "." + spawnid + ".yaw"),
+				(float)spawns.getDouble("spawns." + gameid + "." + spawnid + ".pitch")
+				);
 	}
 	
 	public void setLobbySpawn(Location l) {
 		system.set("sg-system.lobby.spawn.world", l.getWorld().getName());
-		system.set("sg-system.lobby.spawn.x", l.getBlockX());
-		system.set("sg-system.lobby.spawn.y", l.getBlockY());
-		system.set("sg-system.lobby.spawn.z", l.getBlockZ());
+		system.set("sg-system.lobby.spawn.x", l.getX());
+		system.set("sg-system.lobby.spawn.y", l.getY());
+		system.set("sg-system.lobby.spawn.z", l.getZ());
+		system.set("sg-system.lobby.spawn.yaw", l.getYaw());
+		system.set("sg-system.lobby.spawn.pitch", l.getPitch());
 	}
 
 
-	public void setSpawn(int gameid, int spawnid, Vector v) {
-		spawns.set("spawns." + gameid + "." + spawnid + ".x", v.getBlockX());
-		spawns.set("spawns." + gameid + "." + spawnid + ".y", v.getBlockY());
-		spawns.set("spawns." + gameid + "." + spawnid + ".z", v.getBlockZ());
+	public void setSpawn(int gameid, int spawnid, Location l) {
+		spawns.set("spawns." + gameid + "." + spawnid + ".x", l.getX());
+		spawns.set("spawns." + gameid + "." + spawnid + ".y", l.getY());
+		spawns.set("spawns." + gameid + "." + spawnid + ".z", l.getZ());
+		spawns.set("spawns." + gameid + "." + spawnid + ".yaw", l.getYaw());
+		spawns.set("spawns." + gameid + "." + spawnid + ".pitch", l.getPitch());
+		
 		if (spawnid > spawns.getInt("spawns." + gameid + ".count")) {
 			spawns.set("spawns." + gameid + ".count", spawnid);
 		}
