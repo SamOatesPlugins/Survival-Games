@@ -16,7 +16,7 @@ public class Reload implements SubCommand{
 	public boolean onCommand(final Player player, String[] args) {
 		if(player.hasPermission(permission())){
 			if(args.length != 1){
-				MessageManager.getInstance().sendMessage(PrefixType.INFO, "Valid reload types <Settings | Games |All>", player);
+				MessageManager.getInstance().sendMessage(PrefixType.INFO, "Valid reload types <Settings | Games | All>", player);
 				MessageManager.getInstance().sendMessage(PrefixType.INFO, "Settings will reload the settings configs and attempt to reapply them", player);
 				MessageManager.getInstance().sendMessage(PrefixType.INFO, "Games will reload all games currently running", player);
 				MessageManager.getInstance().sendMessage(PrefixType.INFO, "All will attempt to reload the entire plugin", player);
@@ -59,8 +59,7 @@ public class Reload implements SubCommand{
 
 	@Override
 	public String help(Player p) {
-		// TODO Auto-generated method stub
-		return null;
+		return "/sg reload <Settings | Games | All> - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.reload", "Settings will reload the settings configs and attempt to reapply them. Games will reload all games currently running and All reloads everything");
 	}
 
 	@Override

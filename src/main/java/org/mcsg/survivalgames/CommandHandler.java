@@ -27,7 +27,6 @@ import org.mcsg.survivalgames.commands.ListPlayers;
 import org.mcsg.survivalgames.commands.Reload;
 import org.mcsg.survivalgames.commands.ResetSpawns;
 import org.mcsg.survivalgames.commands.SetLobbySpawn;
-import org.mcsg.survivalgames.commands.SetLobbyWall;
 import org.mcsg.survivalgames.commands.SetSpawn;
 import org.mcsg.survivalgames.commands.Spectate;
 import org.mcsg.survivalgames.commands.SubCommand;
@@ -56,27 +55,32 @@ public class CommandHandler implements CommandExecutor {
 	}
 
 	private void loadCommands() {
-		commands.put("createarena", new CreateArena());
+				
+		// player commands
 		commands.put("join", new Join());
-		commands.put("addwall", new AddWall());
-		commands.put("setspawn", new SetSpawn());
-		commands.put("listarenas", new ListArenas());
+		commands.put("vote", new Vote());
+		commands.put("leave", new Leave());
+		commands.put("spectate", new Spectate());
+		commands.put("leavequeue", new LeaveQueue());
+		commands.put("list", new ListPlayers());
+		
+		// staff commands
 		commands.put("disable", new Disable());
 		commands.put("start", new ForceStart());
 		commands.put("enable", new Enable());
-		commands.put("vote", new Vote());
-		commands.put("leave", new Leave());
+		
+		// admin commands	
+		commands.put("createarena", new CreateArena());
+		commands.put("addwall", new AddWall());
+		commands.put("setspawn", new SetSpawn());
+		commands.put("listarenas", new ListArenas());
 		commands.put("setlobbyspawn", new SetLobbySpawn());
-		commands.put("setlobbywall", new SetLobbyWall());
 		commands.put("resetspawns", new ResetSpawns());
 		commands.put("delarena", new DelArena());
 		commands.put("flag", new Flag());
-		commands.put("spectate", new Spectate());
-		commands.put("leavequeue", new LeaveQueue());
-		commands.put("leavequeue", new LeaveQueue());
-		commands.put("list", new ListPlayers());
 		commands.put("tp", new Teleport());
 		commands.put("reload", new Reload());
+		
 	}
 
 	private void loadHelpInfo() {
@@ -102,6 +106,8 @@ public class CommandHandler implements CommandExecutor {
 		helpinfo.put("resetspawns", CommandGroup.Admin);
 		helpinfo.put("delarena", CommandGroup.Admin);
 		helpinfo.put("flag", CommandGroup.Admin);
+		helpinfo.put("tp", CommandGroup.Admin);
+		helpinfo.put("reload", CommandGroup.Admin);
 	}
 
 	@Override
