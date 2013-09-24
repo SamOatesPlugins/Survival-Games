@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -104,7 +105,7 @@ public class GameScoreboard {
 		Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), new Runnable() {
             public void run() {
             	gameObjective.getScore(player).setScore(0);
-            	gameObjective.setDisplayName(GameManager.getInstance().getGame(gameID).getName() + " (" + noofPlayers + "/24)");
+            	gameObjective.setDisplayName(ChatColor.GOLD + GameManager.getInstance().getGame(gameID).getName() + " (" + noofPlayers + "/" + SettingsManager.getInstance().getSpawnCount(gameID) + ")");
             }
         }, 1L);
 		
@@ -130,13 +131,8 @@ public class GameScoreboard {
 		this.activePlayers.remove(player.getName());
 				
 		// Update the objective title
-		final Objective gameObjective = this.objective;
 		final int noofPlayers = this.activePlayers.size();
-		Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), new Runnable() {
-            public void run() {
-            	gameObjective.setDisplayName(GameManager.getInstance().getGame(gameID).getName() + " (" + noofPlayers + "/24)");
-            }
-        }, 1L);
+		this.objective.setDisplayName(ChatColor.GOLD + GameManager.getInstance().getGame(gameID).getName() + " (" + noofPlayers + "/" + SettingsManager.getInstance().getSpawnCount(gameID) + ")");
 		
 	}
 

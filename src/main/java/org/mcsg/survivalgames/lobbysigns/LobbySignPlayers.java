@@ -14,6 +14,10 @@ public class LobbySignPlayers extends LobbySign {
 		
 	}
 
+	public LobbySignPlayers(int gameId) {
+		super(gameId, LobbySignType.Players);
+	}
+
 	@Override
 	public void execute(Player player) {
 

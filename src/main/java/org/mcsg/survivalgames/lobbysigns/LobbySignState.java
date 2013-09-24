@@ -12,6 +12,10 @@ public class LobbySignState extends LobbySign {
 		sign.setLine(2, getGame().getGameMode().toString());
 	}
 
+	public LobbySignState(int gameId) {
+		super(gameId, LobbySignType.State);
+	}
+
 	@Override
 	public void execute(Player player) {
 		// output some help about the state and what it means?

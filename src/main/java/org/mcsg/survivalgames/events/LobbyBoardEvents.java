@@ -8,12 +8,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.SurvivalGames;
 import org.mcsg.survivalgames.lobbysigns.LobbySign;
 import org.mcsg.survivalgames.lobbysigns.LobbySignJoin;
+import org.mcsg.survivalgames.lobbysigns.LobbySignManager;
 import org.mcsg.survivalgames.lobbysigns.LobbySignPlayerList;
 import org.mcsg.survivalgames.lobbysigns.LobbySignPlayers;
 import org.mcsg.survivalgames.lobbysigns.LobbySignState;
@@ -94,6 +96,20 @@ public class LobbyBoardEvents implements Listener {
 		
 		((SurvivalGames)GameManager.getInstance().getPlugin()).getLobbySignManager().addSign(newLobbySign);
 		player.sendMessage("New " + newLobbySign.getType() + " for " + newLobbySign.getGame().getName() + " created.");
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreak(BlockBreakEvent event) {
+		
+		Block block = event.getBlock();
+		LobbySignManager signManager = ((SurvivalGames)GameManager.getInstance().getPlugin()).getLobbySignManager();
+		
+		LobbySign sign = signManager.getSign(block.getLocation());
+		if (sign == null)
+			return;
+		
+		signManager.removeSign(sign);
+		event.getPlayer().sendMessage("Removed " + sign.getType() + " lobby sign for " + sign.getGame().getName());
 	}
 
 }

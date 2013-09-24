@@ -3,14 +3,12 @@ package org.mcsg.survivalgames;
 import java.util.HashSet;
 
 import org.bukkit.Chunk;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.mcsg.survivalgames.lobbysigns.LobbySignManager;
 
 public class LobbyManager {
 
 	private static LobbyManager instance = null;
 	public static HashSet < Chunk > lobbychunks = new HashSet < Chunk > ();
-	FileConfiguration s = SettingsManager.getInstance().getSystemConfig();
 	LobbySignManager signManager = null;
 	
 	private LobbyManager(LobbySignManager signManager) {

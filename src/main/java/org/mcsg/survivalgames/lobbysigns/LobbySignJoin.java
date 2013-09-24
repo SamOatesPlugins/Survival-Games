@@ -15,6 +15,10 @@ public class LobbySignJoin extends LobbySign {
 				
 	}
 
+	public LobbySignJoin(int gameId) {
+		super(gameId, LobbySignType.Join);
+	}
+
 	@Override
 	public void execute(Player player) {
 		GameManager.getInstance().addPlayer(player, this.gameId);

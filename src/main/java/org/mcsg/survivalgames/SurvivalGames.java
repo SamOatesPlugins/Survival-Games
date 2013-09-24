@@ -33,7 +33,7 @@ public class SurvivalGames extends JavaPlugin {
 	public static boolean config_todate = false;
 	public static int config_version = 3;
 	
-	private LobbySignManager lobbySignManager = new LobbySignManager();
+	private LobbySignManager lobbySignManager;
 
 	public static List < String > auth = Arrays.asList(new String[] {
 		"n3wton", "TheFish97"
@@ -59,6 +59,7 @@ public class SurvivalGames extends JavaPlugin {
 
 	public void onEnable() {
 		logger = p.getLogger();
+		datafolder = p.getDataFolder();
 
 		//ensure that all worlds are loaded. Fixes some issues with Multiverse loading after this plugin had started
 		getServer().getScheduler().scheduleSyncDelayedTask(this, new Startup(), 10);
@@ -74,8 +75,6 @@ public class SurvivalGames extends JavaPlugin {
 
 	class Startup implements Runnable {
 		public void run() {
-			datafolder = p.getDataFolder();
-
 			PluginManager pm = getServer().getPluginManager();
 			setCommands();
 
@@ -83,6 +82,7 @@ public class SurvivalGames extends JavaPlugin {
 			MessageManager.getInstance().setup();
 			GameManager.getInstance().setup(p);
 			
+			lobbySignManager = new LobbySignManager();
 			lobbySignManager.loadSigns();
 
 			try { // try loading everything that uses SQL. 
