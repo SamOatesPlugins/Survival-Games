@@ -63,6 +63,7 @@ public class CommandHandler implements CommandExecutor {
 		commands.put("spectate", new Spectate());
 		commands.put("leavequeue", new LeaveQueue());
 		commands.put("list", new ListPlayers());
+		commands.put("listarenas", new ListArenas());
 		
 		// staff commands
 		commands.put("disable", new Disable());
@@ -73,7 +74,6 @@ public class CommandHandler implements CommandExecutor {
 		commands.put("createarena", new CreateArena());
 		commands.put("addwall", new AddWall());
 		commands.put("setspawn", new SetSpawn());
-		commands.put("listarenas", new ListArenas());
 		commands.put("setlobbyspawn", new SetLobbySpawn());
 		commands.put("resetspawns", new ResetSpawns());
 		commands.put("delarena", new DelArena());
@@ -91,6 +91,7 @@ public class CommandHandler implements CommandExecutor {
 		helpinfo.put("spectate", CommandGroup.Player);
 		helpinfo.put("leavequeue", CommandGroup.Player);
 		helpinfo.put("list", CommandGroup.Player);
+		helpinfo.put("listarenas", CommandGroup.Player);
 		
 		// staff commands
 		helpinfo.put("disable", CommandGroup.Staff);
@@ -101,7 +102,6 @@ public class CommandHandler implements CommandExecutor {
 		helpinfo.put("createarena", CommandGroup.Admin);
 		helpinfo.put("addwall", CommandGroup.Admin);
 		helpinfo.put("setspawn", CommandGroup.Admin);
-		helpinfo.put("listarenas", CommandGroup.Admin);
 		helpinfo.put("setlobbyspawn", CommandGroup.Admin);
 		helpinfo.put("resetspawns", CommandGroup.Admin);
 		helpinfo.put("delarena", CommandGroup.Admin);
@@ -138,7 +138,7 @@ public class CommandHandler implements CommandExecutor {
 			}
 			if (args[0].equalsIgnoreCase("help")) {
 				if (args.length == 1) {
-					msgmgr.sendMessage(PrefixType.INFO, "Type /sg help <player | staff | admin> for command information", player);
+					help(player, CommandGroup.Player);
 				}
 				else {
 					if (args[1].toLowerCase().startsWith("player")) {

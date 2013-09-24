@@ -67,7 +67,7 @@ public class ListPlayers implements SubCommand{
 
 	@Override
 	public String help(Player p) {
-        return "/sg list - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.listplayers","List all players in the arena you are playing in");
+        return "/sg list [id]- " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.listplayers","List all players in the arena you are playing in, or lists all arenas if you are not in a game.");
 	}
 
 	@Override
