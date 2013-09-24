@@ -104,7 +104,7 @@ public class GameScoreboard {
 		Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), new Runnable() {
             public void run() {
             	gameObjective.getScore(player).setScore(0);
-            	gameObjective.setDisplayName("SG Arena (" + noofPlayers + "/24)");
+            	gameObjective.setDisplayName(GameManager.getInstance().getGame(gameID).getName() + " (" + noofPlayers + "/24)");
             }
         }, 1L);
 		
@@ -133,7 +133,7 @@ public class GameScoreboard {
 		final int noofPlayers = this.activePlayers.size();
 		Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), new Runnable() {
             public void run() {
-            	gameObjective.setDisplayName("SG Arena (" + noofPlayers + "/24)");
+            	gameObjective.setDisplayName(GameManager.getInstance().getGame(gameID).getName() + " (" + noofPlayers + "/24)");
             }
         }, 1L);
 		
