@@ -21,8 +21,9 @@ public class LobbySignPlayers extends LobbySign {
 
 	@Override
 	public void update() {
-		getSign().setLine(2, getGame().getActivePlayers() + "/" + SettingsManager.getInstance().getSpawnCount(gameId));
-		getSign().update(true);
+		Sign sign = getSign();		
+		sign.setLine(2, getGame().getActivePlayers() + "/" + SettingsManager.getInstance().getSpawnCount(gameId));
+		sign.update();
 	}
 
 }

@@ -21,7 +21,9 @@ public class LobbySignPlayerList extends LobbySign {
 
 	@Override
 	public void update() {
-
+		Sign sign = getSign();		
+				
+		sign.update();
 	}
 
 }
