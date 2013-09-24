@@ -119,6 +119,7 @@ public class GameScoreboard {
 		
 		// remove the player from the team
 		this.livingTeam.removePlayer(player);
+		this.scoreboard.resetScores(player);
 		
 		// Restore the players scoreboard
 		Scoreboard original = this.originalScoreboard.get(player.getName());
