@@ -517,7 +517,7 @@ public class Game {
 			for (Object in : spawns.keySet().toArray()) {
 				if (spawns.get(in) == p) spawns.remove(in);
 			}
-			LobbyManager.getInstance().clearSigns(gameID);
+			LobbyManager.getInstance().updateWall(gameID);
 		}
 
 		HookManager.getInstance().runHook("PLAYER_REMOVED", "player-"+p.getName());
@@ -646,9 +646,7 @@ public class Game {
 		restoreInv(win);
 		scoreBoard.removePlayer(p);
 		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin","arena-"+gameID, "victim-"+p.getName(), "player-"+win.getName());
-		LobbyManager.getInstance().display(new String[] {
-				win.getName(), "", "Won the ", "Survival Games!"
-		}, gameID);
+		LobbyManager.getInstance().updateWall(gameID);
 
 		mode = GameMode.FINISHING;
 
@@ -674,9 +672,7 @@ public class Game {
 	public void endGame() {
 		mode = GameMode.WAITING;
 		resetArena();
-		LobbyManager.getInstance().clearSigns(gameID);
 		LobbyManager.getInstance().updateWall(gameID);
-
 	}
 	/*
 	 * 

@@ -16,6 +16,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcsg.survivalgames.events.*;
 import org.mcsg.survivalgames.hooks.HookManager;
+import org.mcsg.survivalgames.lobbysigns.LobbySignManager;
 import org.mcsg.survivalgames.logging.LoggingManager;
 import org.mcsg.survivalgames.logging.QueueManager;
 import org.mcsg.survivalgames.stats.StatsManager;
@@ -31,6 +32,8 @@ public class SurvivalGames extends JavaPlugin {
 	public static boolean dbcon = false;
 	public static boolean config_todate = false;
 	public static int config_version = 3;
+	
+	private LobbySignManager lobbySignManager = new LobbySignManager();
 
 	public static List < String > auth = Arrays.asList(new String[] {
 		"n3wton", "TheFish97"
@@ -79,6 +82,8 @@ public class SurvivalGames extends JavaPlugin {
 			SettingsManager.getInstance().setup(p);
 			MessageManager.getInstance().setup();
 			GameManager.getInstance().setup(p);
+			
+			lobbySignManager.loadSigns();
 
 			try { // try loading everything that uses SQL. 
 				FileConfiguration c = SettingsManager.getInstance().getConfig();
@@ -92,7 +97,7 @@ public class SurvivalGames extends JavaPlugin {
 				logger.severe("!!!Failed to connect to the database. Please check the settings and try again!!!");
 				return;
 			} finally {
-				LobbyManager.getInstance().setup(p);
+				LobbyManager.createInstance(lobbySignManager);
 			}
 
 			ChestRatioStorage.getInstance().setup();
@@ -112,6 +117,7 @@ public class SurvivalGames extends JavaPlugin {
 			pm.registerEvents(new BandageUse(), p);
 			pm.registerEvents(new KitEvents(), p);
 			pm.registerEvents(new KeepLobbyLoadedEvent(), p);
+			pm.registerEvents(new LobbyBoardEvents(), p);
 
 
 			for (Player p: Bukkit.getOnlinePlayers()) {
@@ -164,5 +170,9 @@ public class SurvivalGames extends JavaPlugin {
 	public static void debug(int a) {
 		if(SettingsManager.getInstance().getConfig().getBoolean("debug", false))
 			debug(a+"");
+	}
+	
+	public LobbySignManager getLobbySignManager() {
+		return lobbySignManager;
 	}
 }

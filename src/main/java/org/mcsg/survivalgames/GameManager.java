@@ -83,9 +83,7 @@ public class GameManager {
 			}
 			a++;
 			
-		}
-		LobbyManager.getInstance().clearAllSigns();
-		
+		}		
 	}
 
 	public int getBlockGameId(Location v) {
