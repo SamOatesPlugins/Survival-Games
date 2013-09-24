@@ -16,9 +16,7 @@ public class NameUtil {
 		if(SurvivalGames.auth.contains(name) && !r){
 			name = ChatColor.DARK_BLUE+name;
 		}
-		if(s && name.equalsIgnoreCase("Double0negative")){
-			name = name.replace("Double0negative", "Double0");
-		}
+
 		return name;
 	}
 }
