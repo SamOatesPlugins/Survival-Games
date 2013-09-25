@@ -41,12 +41,15 @@ public class LobbySignPlayerList extends LobbySign {
 	public void update() {
 		Sign sign = getSign();		
 		
+		for (int lineIndex = 0; lineIndex < 4; ++lineIndex) {
+			sign.setLine(lineIndex, "");
+		}
+		
 		ArrayList<Player> players = getGame().getAllPlayers();
 		int index = 0;
 		for (int playerIndex = playerIndexStart; playerIndex < playerIndexStart + 4; ++playerIndex) {
 			if (playerIndex >= players.size()) {
-				sign.setLine(index, "");
-				continue;
+				break;
 			}
 			
 			Player player = players.get(playerIndex);
