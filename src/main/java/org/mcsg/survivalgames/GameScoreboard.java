@@ -45,7 +45,11 @@ public class GameScoreboard {
 		
 		// Remove any players still on the scoreboard
 		if (!this.activePlayers.isEmpty()) {
-			for (String playerName : activePlayers) {
+			ArrayList<String> players = new ArrayList<String>();
+			for (String playerName : this.activePlayers) {
+				players.add(playerName);
+			}
+			for (String playerName : players) {
 				Player player = Bukkit.getPlayer(playerName);
 				if (player != null) {
 					removePlayer(player);
