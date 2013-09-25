@@ -9,13 +9,28 @@ import org.mcsg.survivalgames.MessageManager.PrefixType;
 public class Join implements SubCommand{
 
 	public boolean onCommand(Player player, String[] args) {
-		if(args.length == 1){
+		if(args.length >= 1){
 			if(player.hasPermission(permission())){
 				try {
 					int a = Integer.parseInt(args[0]);
 					GameManager.getInstance().addPlayer(player, a);
 				} catch (NumberFormatException e) {
-					MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notanumber", player, "input-" + args[0]);
+					String gameName = "";
+					for (String arg : args) {
+						gameName += arg + " ";
+					}
+					gameName = gameName.trim();
+					
+					if (gameName.equalsIgnoreCase("random")) {
+						GameManager.getInstance().autoAddPlayer(player);
+					} else {					
+						int gameId = GameManager.getInstance().getIdFromName(gameName);
+						if (gameId != -1) {
+							GameManager.getInstance().addPlayer(player, gameId);
+						} else {				
+							MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notanumber", player, "input-" + args[0]);
+						}
+					}
 				}
 			}
 			else{

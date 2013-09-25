@@ -3,6 +3,7 @@ package org.mcsg.survivalgames;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
@@ -243,9 +244,11 @@ public class GameManager {
 	}
 
 	public void autoAddPlayer(Player pl) {
-		ArrayList < Game > qg = new ArrayList < Game > (5);
+		ArrayList<Game> qg = new ArrayList<Game>();
 		for (Game g: games) {
-			if (g.getMode() == Game.GameMode.WAITING) qg.add(g);
+			if (g.getMode() == Game.GameMode.WAITING) {
+				qg.add(g);
+			}
 		}
 		//TODO: fancy auto balance algorithm
 		if (qg.size() == 0) {
@@ -253,7 +256,9 @@ public class GameManager {
 			msgmgr.sendMessage(PrefixType.WARNING, "No games to join!", pl);
 			return;
 		}
-		qg.get(0).addPlayer(pl);
+		
+		int randomGame = (new Random()).nextInt(qg.size());
+		qg.get(randomGame).addPlayer(pl);
 	}
 
 	public WorldEditPlugin getWorldEdit() {
@@ -339,6 +344,14 @@ public class GameManager {
 		sb.append("\n\n");
 
 		return sb.toString();
+	}
+
+	public int getIdFromName(String gameName) {
+		for (Game game : games) {
+			if (game.getName().equalsIgnoreCase(gameName))
+				return game.getID();
+		}
+		return -1;
 	}
 
 
