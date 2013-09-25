@@ -239,7 +239,7 @@ public class GameManager {
 			MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.input",p, "message-No game by this ID exist!");
 			return;
 		}
-		getGame(g).addPlayer(p);
+		game.addPlayer(p);
 	}
 
 	public void autoAddPlayer(Player pl) {

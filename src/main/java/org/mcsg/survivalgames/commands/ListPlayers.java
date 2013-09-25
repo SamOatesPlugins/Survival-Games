@@ -38,7 +38,7 @@ public class ListPlayers implements SubCommand{
 		    	}
 				
 				for (Game game : games) {
-					player.sendMessage(Game.GetColorPrefix(game.getGameMode()) + game.getName() + " - " + game.getGameMode() + " - Players (" + game.getActivePlayers() + "/" + SettingsManager.getInstance().getSpawnCount(game.getID()) + ")");
+					player.sendMessage(game.getID() + " - " + Game.GetColorPrefix(game.getGameMode()) + game.getName() + " - " + game.getGameMode() + " - Players (" + game.getActivePlayers() + "/" + SettingsManager.getInstance().getSpawnCount(game.getID()) + ")");
 				}
 				return false;
 			}

@@ -219,7 +219,7 @@ public class Game {
 		if (spectators.contains(p)) removeSpectator(p);
 		if (mode == GameMode.WAITING || mode == GameMode.STARTING) {
 			if (activePlayers.size() < SettingsManager.getInstance().getSpawnCount(gameID)) {
-				msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, p);
+				msgmgr.sendMessage(PrefixType.INFO, "Joining Arena '" + name + "'", p);
 				PlayerJoinArenaEvent joinarena = new PlayerJoinArenaEvent(p, GameManager.getInstance().getGame(gameID));
 				Bukkit.getServer().getPluginManager().callEvent(joinarena);
 				if(joinarena.isCancelled()) return false;
