@@ -3,6 +3,7 @@ package org.mcsg.survivalgames;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -1010,35 +1011,27 @@ public class Game {
 		}
 	}
 
-	/*public void randomTrap() {
-	 * 
-        World world = SettingsManager.getGameWorld(gameID);
+	public static ChatColor GetColorPrefix(GameMode gameMode) {
 
-        double xcord;
-        double zcord;
-        double ycord = 80;
-        Random rand = new Random();
-        xcord = rand.nextInt(1000);
-        zcord = rand.nextInt(1000);
-        Location trap = new Location(world, xcord, ycord, zcord);
-        boolean isAir = true;
+		if (gameMode == GameMode.DISABLED)
+			return ChatColor.RED;
+		if (gameMode == GameMode.ERROR)
+			return ChatColor.DARK_RED;
+		if (gameMode == GameMode.FINISHING)
+			return ChatColor.DARK_PURPLE;
+		if (gameMode == GameMode.WAITING)
+			return ChatColor.GOLD;
+		if (gameMode == GameMode.INGAME)
+			return ChatColor.DARK_GREEN;
+		if (gameMode == GameMode.STARTING)
+			return ChatColor.GREEN;
+		if (gameMode == GameMode.RESETING)
+			return ChatColor.DARK_AQUA;
+		if (gameMode == GameMode.LOADING)
+			return ChatColor.BLUE;
+		if (gameMode == GameMode.INACTIVE)
+			return ChatColor.DARK_GRAY;
 
-        while(isAir == true) {
-            ycord--;
-            Byte blockData = trap.getBlock().getData();
-            if(blockData != 0) {
-                trap.getBlock().setType(Material.AIR);
-                ycord--;
-                trap.getBlock().setType(Material.AIR);
-                ycord--;
-                trap.getBlock().setType(Material.AIR);
-                ycord--;
-                trap.getBlock().setType(Material.LAVA);
-                isAir = false;
-            } else {
-                isAir = true;
-            }
-        }
-
-    }*/
+		return ChatColor.WHITE;
+	}
 }
