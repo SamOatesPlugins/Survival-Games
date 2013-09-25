@@ -17,7 +17,7 @@ public class GameScoreboard {
 	
 	private final int gameID;
 	private final Scoreboard scoreboard;
-	private Objective objective = null;
+	private Objective sidebarObjective = null;
 	private Team livingTeam = null;
 	
 	private HashMap<String, Scoreboard> originalScoreboard = new HashMap<String, Scoreboard>();
@@ -54,9 +54,9 @@ public class GameScoreboard {
 		}
 		
 		// Unregister the objective
-		if (this.objective != null) {
-			this.objective.unregister();
-			this.objective = null;
+		if (this.sidebarObjective != null) {
+			this.sidebarObjective.unregister();
+			this.sidebarObjective = null;
 		}
 		
 		// Reset the living team
@@ -66,9 +66,8 @@ public class GameScoreboard {
 		}
 		
 		// Create the objective
-		this.objective = this.scoreboard.registerNewObjective("survivalGames-" + this.gameID, "dummy");
-		this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		this.objective.setDisplayName("SG Arena (0/24)");
+		this.sidebarObjective = this.scoreboard.registerNewObjective("survivalGames-" + this.gameID, "dummy");
+		this.sidebarObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
 		// Create the living team
 		this.livingTeam = this.scoreboard.registerNewTeam("Living");
@@ -97,18 +96,17 @@ public class GameScoreboard {
 		this.livingTeam.addPlayer(player);
 		
 		// Set the players score to zero, then increase it
-		Score score = this.objective.getScore(player);
+		Score score = this.sidebarObjective.getScore(player);
 		score.setScore(1);
 		
-		final Objective gameObjective = this.objective;
-		final int noofPlayers = this.activePlayers.size();
+		final Objective sidebarObjective = this.sidebarObjective;
 		Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), new Runnable() {
             public void run() {
-            	gameObjective.getScore(player).setScore(0);
-            	gameObjective.setDisplayName(ChatColor.GOLD + GameManager.getInstance().getGame(gameID).getName() + " (" + noofPlayers + "/" + SettingsManager.getInstance().getSpawnCount(gameID) + ")");
+            	sidebarObjective.getScore(player).setScore(0);
             }
         }, 1L);
 		
+		updateSidebarTitle();	
 	}
 	
 	/**
@@ -130,10 +128,18 @@ public class GameScoreboard {
 		}
 		this.activePlayers.remove(player.getName());
 				
-		// Update the objective title
+		updateSidebarTitle();
+	}
+	
+	/**
+	 * Update the title of the sidebar objective
+	 */
+	private void updateSidebarTitle() {
 		final int noofPlayers = this.activePlayers.size();
-		this.objective.setDisplayName(ChatColor.GOLD + GameManager.getInstance().getGame(gameID).getName() + " (" + noofPlayers + "/" + SettingsManager.getInstance().getSpawnCount(gameID) + ")");
+		final int maxPlayers = SettingsManager.getInstance().getSpawnCount(gameID);
+		final String gameName = GameManager.getInstance().getGame(gameID).getName();
 		
+		this.sidebarObjective.setDisplayName(ChatColor.GOLD + gameName + " (" + noofPlayers + "/" + maxPlayers + ")");
 	}
 
 }
