@@ -7,9 +7,6 @@ public class LobbySignState extends LobbySign {
 
 	public LobbySignState(Sign sign, int gameId) {
 		super(sign.getLocation(), gameId, LobbySignType.State);
-		
-		sign.setLine(1, "Arena State");
-		sign.setLine(2, getGame().getGameMode().toString());
 	}
 
 	public LobbySignState(int gameId) {
@@ -26,6 +23,13 @@ public class LobbySignState extends LobbySign {
 		Sign sign = getSign();		
 		sign.setLine(2, getGame().getGameMode().toString());
 		sign.update();
+	}
+
+	@Override
+	public String[] setSignContent(String[] lines) {
+		lines[1] = "Arena State";
+		lines[2] = getGame().getGameMode().toString();
+		return lines;
 	}
 	
 }

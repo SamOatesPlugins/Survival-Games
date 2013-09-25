@@ -71,4 +71,6 @@ public abstract class LobbySign {
 	
 	public abstract void update();
 
+	public abstract String[] setSignContent(String[] lines);
+
 }

@@ -8,11 +8,7 @@ import org.mcsg.survivalgames.GameManager;
 public class LobbySignJoin extends LobbySign {
 
 	public LobbySignJoin(Sign sign, int gameId) {
-		super(sign.getLocation(), gameId, LobbySignType.Join);
-		
-		sign.setLine(1, ChatColor.BOLD + "Join Arena");
-		sign.setLine(2, getGame().getName());
-				
+		super(sign.getLocation(), gameId, LobbySignType.Join);				
 	}
 
 	public LobbySignJoin(int gameId) {
@@ -27,6 +23,13 @@ public class LobbySignJoin extends LobbySign {
 	@Override
 	public void update() {
 		
+	}
+
+	@Override
+	public String[] setSignContent(String[] lines) {
+		lines[1] = ChatColor.BOLD + "Join Arena";
+		lines[2] = getGame().getName();
+		return lines;
 	}
 
 }

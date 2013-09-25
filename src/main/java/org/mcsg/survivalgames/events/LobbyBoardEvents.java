@@ -1,5 +1,6 @@
 package org.mcsg.survivalgames.events;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -63,35 +64,51 @@ public class LobbyBoardEvents implements Listener {
 			gameId = -1;
 		}
 		
-		if (gameId == -1 || GameManager.getInstance().getGame(gameId) == null) {
-			return;
-		}
-
 		LobbySign newLobbySign = null;
+		boolean validSign = false;
+		boolean validGameId = !(gameId == -1 || GameManager.getInstance().getGame(gameId) == null);
 		
 		// Join Sign
 		if (createLine.equalsIgnoreCase("[sg-join]")) {
-			newLobbySign = new LobbySignJoin(sign, gameId);
+			validSign = true;
+			if (validGameId) {
+				newLobbySign = new LobbySignJoin(sign, gameId);
+			}
 		}
 		// State sign
 		else if (createLine.equalsIgnoreCase("[sg-state]")) {
-			newLobbySign = new LobbySignState(sign, gameId);
+			validSign = true;
+			if (validGameId) {
+				newLobbySign = new LobbySignState(sign, gameId);
+			}
 		}
 		// Player sign
 		else if (createLine.equalsIgnoreCase("[sg-players]")) {
-			newLobbySign = new LobbySignPlayers(sign, gameId);
+			validSign = true;
+			if (validGameId) {
+				newLobbySign = new LobbySignPlayers(sign, gameId);
+			}
 		}
 		// Player list sign
 		else if (createLine.equalsIgnoreCase("[sg-playerlist]")) {
-			newLobbySign = new LobbySignPlayerList(sign, gameId);
+			validSign = true;
+			if (validGameId) {
+				newLobbySign = new LobbySignPlayerList(sign, gameId);
+			}
+		}
+		
+		if (validSign && !validGameId) {
+			player.sendMessage(ChatColor.DARK_RED + "Could not create sign for arena " + gameId + ".");
+			return;
 		}
 		
 		if (newLobbySign == null) {
 			return;
 		}
 		
+		String[] signContent = newLobbySign.setSignContent(event.getLines());		
 		for (int line = 0; line < 4; ++line) {
-			event.setLine(line, sign.getLine(line));
+			event.setLine(line, signContent[line]);
 		}
 		
 		((SurvivalGames)GameManager.getInstance().getPlugin()).getLobbySignManager().addSign(newLobbySign);

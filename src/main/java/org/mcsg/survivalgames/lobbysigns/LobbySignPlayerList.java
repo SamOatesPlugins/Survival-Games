@@ -14,11 +14,6 @@ public class LobbySignPlayerList extends LobbySign {
 
 	public LobbySignPlayerList(Sign sign, int gameId) {
 		super(sign.getLocation(), gameId, LobbySignType.PlayerList);
-		
-		sign.setLine(0, "");
-		sign.setLine(1, "");
-		sign.setLine(2, "");
-		sign.setLine(3, "");
 	}
 
 	public LobbySignPlayerList(int gameId) {
@@ -65,6 +60,15 @@ public class LobbySignPlayerList extends LobbySign {
 	
 	public void setRange(int start) {
 		playerIndexStart = start;
+	}
+
+	@Override
+	public String[] setSignContent(String[] lines) {
+		lines[0] = "";
+		lines[1] = "";
+		lines[2] = "";
+		lines[3] = "";
+		return lines;
 	}
 
 }

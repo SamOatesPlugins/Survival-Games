@@ -8,10 +8,6 @@ public class LobbySignPlayers extends LobbySign {
 
 	public LobbySignPlayers(Sign sign, int gameId) {
 		super(sign.getLocation(), gameId, LobbySignType.Players);
-		
-		sign.setLine(1, "Active Players");
-		sign.setLine(2, getGame().getActivePlayers() + "/" + SettingsManager.getInstance().getSpawnCount(gameId));
-		
 	}
 
 	public LobbySignPlayers(int gameId) {
@@ -30,4 +26,10 @@ public class LobbySignPlayers extends LobbySign {
 		sign.update();
 	}
 
+	@Override
+	public String[] setSignContent(String[] lines) {
+		lines[1] = "Active Players";
+		lines[2] = getGame().getActivePlayers() + "/" + SettingsManager.getInstance().getSpawnCount(gameId);
+		return lines;
+	}
 }
