@@ -43,6 +43,7 @@ public class Game {
 
 	private Arena arena;
 	private int gameID;
+	private String name;
 	private int gcount = 0;
 	private FileConfiguration config;
 	private FileConfiguration system;
@@ -64,6 +65,7 @@ public class Game {
 
 	public Game(int gameid) {
 		gameID = gameid;
+		name = "Arena " + gameID;
 		reloadConfig();
 		setup();
 	}
@@ -86,16 +88,16 @@ public class Game {
 		int x = system.getInt("sg-system.arenas." + gameID + ".x1");
 		int y = system.getInt("sg-system.arenas." + gameID + ".y1");
 		int z = system.getInt("sg-system.arenas." + gameID + ".z1");
-		$(x + " " + y + " " + z);
+
 		int x1 = system.getInt("sg-system.arenas." + gameID + ".x2");
 		int y1 = system.getInt("sg-system.arenas." + gameID + ".y2");
 		int z1 = system.getInt("sg-system.arenas." + gameID + ".z2");
-		$(x1 + " " + y1 + " " + z1);
-		Location max = new Location(SettingsManager.getGameWorld(gameID), Math.max(x, x1), Math.max(y, y1), Math.max(z, z1));
-		$(max.toString());
-		Location min = new Location(SettingsManager.getGameWorld(gameID), Math.min(x, x1), Math.min(y, y1), Math.min(z, z1));
-		$(min.toString());
 
+		Location max = new Location(SettingsManager.getGameWorld(gameID), Math.max(x, x1), Math.max(y, y1), Math.max(z, z1));
+		Location min = new Location(SettingsManager.getGameWorld(gameID), Math.min(x, x1), Math.min(y, y1), Math.min(z, z1));
+
+		name = system.getString("sg-system.arenas." + gameID + ".name", name);
+		
 		arena = new Arena(min, max);
 
 		loadspawns();
@@ -1002,7 +1004,7 @@ public class Game {
 	}
 
 	public String getName() {
-		return "Arena "+gameID;
+		return name;
 	}
 
 	public void msgFall(PrefixType type, String msg, String...vars){

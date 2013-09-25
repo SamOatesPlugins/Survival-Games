@@ -22,7 +22,9 @@ public class LobbySignJoin extends LobbySign {
 
 	@Override
 	public void update() {
-		
+		Sign sign = getSign();
+		sign.setLine(2, getGame().getName());
+		sign.update();
 	}
 
 	@Override
