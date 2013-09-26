@@ -648,7 +648,7 @@ public class Game {
 		win.teleport(SettingsManager.getInstance().getLobbySpawn());
 		restoreInv(win);
 		scoreBoard.removePlayer(p);
-		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin","arena-"+gameID, "victim-"+p.getName(), "player-"+win.getName());
+		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin", name, "victim-"+p.getName(), "player-"+win.getName());
 		LobbyManager.getInstance().updateWall(gameID);
 
 		mode = GameMode.FINISHING;
@@ -668,7 +668,7 @@ public class Game {
 
 		loadspawns();
 		LobbyManager.getInstance().updateWall(gameID);
-		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-"+gameID);
+		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", name);
 
 	}
 
