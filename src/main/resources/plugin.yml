@@ -3,6 +3,7 @@ version: ${project.version}
 main: org.mcsg.survivalgames.SurvivalGames
 authors: [Double0negative, n3wton, TheFish97]
 description: Fully Automated Hunger Games Plugin!
+depend: [TabAPI]
 
 commands:
     survivalgames:

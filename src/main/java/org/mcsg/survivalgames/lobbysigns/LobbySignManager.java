@@ -2,7 +2,9 @@ package org.mcsg.survivalgames.lobbysigns;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
@@ -137,6 +139,13 @@ public class LobbySignManager {
 			else if (signType == LobbySignType.State) {
 				sign = new LobbySignState(gameId);
 			}
+			else if (signType == LobbySignType.Winner) {
+				sign = new LobbySignWinner(gameId);
+			}
+			else {
+				SurvivalGames.$(Level.SEVERE, "Invalid sign type! " + file.getName());
+				continue;
+			}
 			
 			FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 			sign.load(config);
@@ -168,6 +177,18 @@ public class LobbySignManager {
 				sign.getLocation().getBlock().breakNaturally();
 			}
 		}
+	}
+
+	public List<LobbySign> getSignsByType(int gameID, LobbySignType type) {
+		ArrayList<LobbySign> typeSigns = new ArrayList<LobbySign>();
+		
+		for (LobbySign sign : signs.values()) {
+			if (sign.getGame().getID() == gameID && sign.getType() == type) {
+				typeSigns.add(sign);
+			}
+		}
+		
+		return typeSigns;
 	}
 
 }

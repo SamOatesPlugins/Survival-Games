@@ -648,10 +648,11 @@ public class Game {
 		win.teleport(SettingsManager.getInstance().getLobbySpawn());
 		restoreInv(win);
 		scoreBoard.removePlayer(p);
-		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin", name, "victim-"+p.getName(), "player-"+win.getName());
-		LobbyManager.getInstance().updateWall(gameID);
+		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin","arena-"+gameID, "victim-"+p.getName(), "player-"+win.getName());
 
 		mode = GameMode.FINISHING;
+		LobbyManager.getInstance().updateWall(gameID);
+		LobbyManager.getInstance().gameEnd(gameID, win);
 
 		clearSpecs();
 		win.setHealth(p.getMaxHealth());
@@ -668,7 +669,7 @@ public class Game {
 
 		loadspawns();
 		LobbyManager.getInstance().updateWall(gameID);
-		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", name);
+		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-"+gameID);
 
 	}
 

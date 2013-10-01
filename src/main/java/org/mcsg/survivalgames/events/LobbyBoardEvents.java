@@ -20,6 +20,7 @@ import org.mcsg.survivalgames.lobbysigns.LobbySignManager;
 import org.mcsg.survivalgames.lobbysigns.LobbySignPlayerList;
 import org.mcsg.survivalgames.lobbysigns.LobbySignPlayers;
 import org.mcsg.survivalgames.lobbysigns.LobbySignState;
+import org.mcsg.survivalgames.lobbysigns.LobbySignWinner;
 
 public class LobbyBoardEvents implements Listener {
 	
@@ -35,7 +36,7 @@ public class LobbyBoardEvents implements Listener {
 		
 		// We only care about signs
 		final Material blockType = block.getType();
-		if (!(blockType == Material.SIGN || blockType == Material.SIGN_POST || blockType == Material.WALL_SIGN))
+		if (!(blockType == Material.SIGN || blockType == Material.SIGN_POST || blockType == Material.WALL_SIGN || blockType == Material.SKULL))
 			return;
 		
 		// See if a lobby sign at the blocks location exists
@@ -96,6 +97,14 @@ public class LobbyBoardEvents implements Listener {
 				newLobbySign = new LobbySignPlayerList(sign, gameId);
 			}
 		}
+		// Player winner sign
+		else if (createLine.equalsIgnoreCase("[sg-winner]")) {
+			validSign = true;
+			if (validGameId) {
+				newLobbySign = new LobbySignWinner(sign, gameId);
+			}
+		}
+		
 		
 		if (validSign && !validGameId) {
 			player.sendMessage(ChatColor.DARK_RED + "Could not create sign for arena " + gameId + ".");
@@ -113,6 +122,8 @@ public class LobbyBoardEvents implements Listener {
 		
 		((SurvivalGames)GameManager.getInstance().getPlugin()).getLobbySignManager().addSign(newLobbySign);
 		player.sendMessage("New " + newLobbySign.getType() + " for " + newLobbySign.getGame().getName() + " created.");
+		
+		newLobbySign.postCreationFixup();
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)

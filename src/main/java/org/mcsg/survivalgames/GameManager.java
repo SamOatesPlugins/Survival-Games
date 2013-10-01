@@ -191,7 +191,8 @@ public class GameManager {
 	}
 
 	public void removePlayer(Player p, boolean b) {
-		getGame(getPlayerGameId(p)).removePlayer(p, b);
+		Game game = getGame(getPlayerGameId(p));
+		game.removePlayer(p, b);
 	}
 
 	public void removeSpectator(Player p) {
@@ -258,7 +259,8 @@ public class GameManager {
 		}
 		
 		int randomGame = (new Random()).nextInt(qg.size());
-		qg.get(randomGame).addPlayer(pl);
+		Game game = qg.get(randomGame);
+		game.addPlayer(pl);
 	}
 
 	public WorldEditPlugin getWorldEdit() {
