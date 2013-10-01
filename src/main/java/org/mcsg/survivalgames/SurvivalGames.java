@@ -34,7 +34,7 @@ public class SurvivalGames extends JavaPlugin {
 	public static int config_version = 3;
 	
 	private LobbySignManager lobbySignManager;
-
+	
 	public static List < String > auth = Arrays.asList(new String[] {
 		"n3wton", "TheFish97"
 	});
@@ -113,7 +113,6 @@ public class SurvivalGames extends JavaPlugin {
 			pm.registerEvents(new TeleportEvent(), p);
 			pm.registerEvents(LoggingManager.getInstance(), p);
 			pm.registerEvents(new SpectatorEvents(), p);
-			pm.registerEvents(new BandageUse(), p);
 			pm.registerEvents(new KitEvents(), p);
 			pm.registerEvents(new KeepLobbyLoadedEvent(), p);
 			pm.registerEvents(new LobbyBoardEvents(), p);
@@ -124,8 +123,6 @@ public class SurvivalGames extends JavaPlugin {
 					p.teleport(SettingsManager.getInstance().getLobbySpawn());
 				}
 			}
-
-			//   new Webserver().start();
 		}
 	}
 
