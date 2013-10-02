@@ -1,6 +1,5 @@
 package org.mcsg.survivalgames.util;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -86,32 +85,37 @@ public class ChestRatioStorage {
 		
 		SurvivalGames.$("Loading Chest Item...");
 		
-		// Get the damage, amount and data values if specified
-		Long damageValue = 255L;
-		Long dataValue = 0L;
+		// amount if specified
 		Long stackSize = 1L;
-		
-		if (itemObject.containsKey("Damage")) {
-			damageValue = (Long)itemObject.get("Damage");
-		}
-		
-		if (itemObject.containsKey("Data")) {
-			dataValue = (Long)itemObject.get("Data");
-		}
-		
+				
 		if (itemObject.containsKey("Amount")) {
-			dataValue = (Long)itemObject.get("Amount");
+			stackSize = (Long)itemObject.get("Amount");
 		}
 		
 		// Create the item stack.
-		ItemStack item = new ItemStack(itemMaterial, stackSize.intValue(), damageValue.shortValue());
-		//item.getData().setData(dataValue.byteValue());
+		ItemStack item = new ItemStack(itemMaterial, stackSize.intValue());
 		
 		SurvivalGames.$("Material: " + itemMaterial);
 		SurvivalGames.$("Amount: " + stackSize);
-		SurvivalGames.$("Damage: " + damageValue);
-		SurvivalGames.$("Data: " + dataValue);
 		
+		if (itemObject.containsKey("Damage")) {
+			Long damageValue = (Long)itemObject.get("Damage");
+			short maxDamage = itemMaterial.getMaxDurability();
+			
+			short actualDurability = (short) (((float)maxDamage) * (damageValue.floatValue() / 100.0f));
+			item.setDurability(actualDurability);
+			
+			SurvivalGames.$("maxDamage: " + maxDamage);
+			SurvivalGames.$("damageValue: " + damageValue);
+			SurvivalGames.$("actualDurability: " + actualDurability);
+		}
+		
+		if (itemObject.containsKey("Data")) {
+			Long dataValue = (Long)itemObject.get("Data");
+			item.setDurability(dataValue.shortValue());
+			SurvivalGames.$("Data: " + dataValue);
+		}		
+				
 		// Get the meta data so we can update it
 		ItemMeta meta = item.getItemMeta();
 		
