@@ -1,0 +1,38 @@
+{
+	"chests": [
+		{
+			"items": [
+				{
+					"Material": "WOOD_SWORD",
+					"Name": "Flimsy Sword",
+					"Lore": [
+						"This is",
+						"a pretty",
+						"broken sword"
+					],
+					"Damage": 100
+				},
+				{
+					"Material": "LEATHER_BOOTS",
+					"Enchantments": [
+						{
+							"Name": "PROTECTION",
+							"Level": 2
+						}
+					]
+				}
+			],
+			"chance": 0.5
+		},
+		{
+			"items": [
+				{
+					"Material": "DIAMOND_SWORD",
+					"Name": "But Fucker"
+				}
+			],
+			"chance": 0.01
+		}
+	]
+}
+

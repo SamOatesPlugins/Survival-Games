@@ -2,14 +2,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mcsg</groupId>
 	<artifactId>survivalgames</artifactId>
-	<version>0.5.8</version>
+	<version>0.6.0</version>
 	<name>SurvivalGames</name>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<upload.dbo.category>server-mods</upload.dbo.category>
 		<upload.dbo.slug>survival-games</upload.dbo.slug>
-    </properties>
+	</properties>
   
 	<repositories>
 		<repository>
@@ -48,14 +48,7 @@
 			<version>B%200.1.15</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.json-lib</groupId>
-			<artifactId>json-lib</artifactId>
-			<version>2.4</version>
-			<classifier>jdk15</classifier>
-		</dependency>
 	</dependencies>
-	
 	
 	<build>
 		<plugins>

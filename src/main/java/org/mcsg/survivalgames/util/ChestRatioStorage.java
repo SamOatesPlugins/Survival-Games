@@ -1,24 +1,31 @@
 package org.mcsg.survivalgames.util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.mcsg.survivalgames.SettingsManager;
-
-
+import org.mcsg.survivalgames.SurvivalGames;
 
 public class ChestRatioStorage {
 
-	HashMap<Integer,  ArrayList<ItemStack>>lvlstore = new HashMap<Integer, ArrayList<ItemStack>>();
 	public static ChestRatioStorage instance = new ChestRatioStorage();
-	private int ratio = 2;
-	private int maxlevel = 0;
+	private ArrayList<Chest> chests = new ArrayList<Chest>();
 
-	private ChestRatioStorage(){ }
+	private ChestRatioStorage() { 
+		
+	}
 
 	public static ChestRatioStorage getInstance(){
 		return instance;
@@ -26,55 +33,166 @@ public class ChestRatioStorage {
 	
 	public void setup(){
 
-		FileConfiguration conf = SettingsManager.getInstance().getChest();
+		File chestFile = SettingsManager.getInstance().getChestFile();
 
-		for(int clevel = 1; clevel <= 16; clevel++){
-			ArrayList<ItemStack> lvl = new ArrayList<ItemStack>();
-			List<String>list = conf.getStringList("chest.lvl"+clevel);
-
-			if(list != null){
-				for(int b = 0; b<list.size();b++){
-					ItemStack i = ItemReader.read(list.get(b));
-					lvl.add(i);
-				}
-				lvlstore.put(clevel, lvl);
-			} else {
-				maxlevel = clevel;
-				break;
+		try {
+			
+			JSONParser parser = new JSONParser();			
+			JSONObject root = (JSONObject)parser.parse(new FileReader(chestFile));
+			
+			JSONArray jsonChests = (JSONArray)root.get("chests");
+			for (Object chestObject : jsonChests) {
+				
+				JSONObject chest = (JSONObject)chestObject;
+				double chance = (Double) chest.get("chance");
+				
+				ArrayList<ItemStack> chestContents = new ArrayList<ItemStack>();
+				JSONArray contents = (JSONArray) chest.get("items");
+				for (Object itemObject : contents) {
+					ItemStack item = parseChestItem((JSONObject)itemObject);	
+					if (item != null) {
+						chestContents.add(item);
+					}
+				}				
+				
+				Chest newChest = new Chest();
+				newChest.setChance(chance);
+				newChest.setContents(chestContents);			
+				this.chests.add(newChest);
 			}
+			
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		
-		ratio = conf.getInt("chest.ratio", ratio);
 		
 	}
 	
-	public int getLevel(int base){
-		Random rand = new Random();
-		int max = Math.min(base + 5, maxlevel);
-		while(rand.nextInt(ratio) == 0 && base < max){
-			base++;
-		}
-		return base;
-	}
-	
-	public ArrayList<ItemStack> getItems(int level){
-		Random r = new Random();
-		ArrayList<ItemStack>items = new ArrayList<ItemStack>();
-
-		for(int a = 0; a< r.nextInt(7)+10; a++){
-			if(r.nextBoolean() == true){
-				while(level<level+5 && level < maxlevel && r.nextInt(ratio) == 1){
-					level++;
-				}
-
-				ArrayList<ItemStack>lvl = lvlstore.get(level);
-				ItemStack item = lvl.get(r.nextInt(lvl.size()));
-
-				items.add(item);
-
+	private ItemStack parseChestItem(JSONObject itemObject) {
+		
+		// We have to get a valid material. If we don't output an error and return null
+		Material itemMaterial = Material.AIR;
+		try {
+			if (!itemObject.containsKey("Material")) {
+				SurvivalGames.$(Level.SEVERE, "Item in chest does not have required material parameter!");
+				return null;
 			}
-
+			
+			itemMaterial = Material.valueOf((String)itemObject.get("Material"));
+			
+		} catch(Exception ex) {
+			SurvivalGames.$(Level.SEVERE, "Item in chest does not have required material parameter!");
+			return null;
 		}
+		
+		SurvivalGames.$("Loading Chest Item...");
+		
+		// Get the damage, amount and data values if specified
+		Long damageValue = 255L;
+		Long dataValue = 0L;
+		Long stackSize = 1L;
+		
+		if (itemObject.containsKey("Damage")) {
+			damageValue = (Long)itemObject.get("Damage");
+		}
+		
+		if (itemObject.containsKey("Data")) {
+			dataValue = (Long)itemObject.get("Data");
+		}
+		
+		if (itemObject.containsKey("Amount")) {
+			dataValue = (Long)itemObject.get("Amount");
+		}
+		
+		// Create the item stack.
+		ItemStack item = new ItemStack(itemMaterial, stackSize.intValue(), damageValue.shortValue());
+		//item.getData().setData(dataValue.byteValue());
+		
+		SurvivalGames.$("Material: " + itemMaterial);
+		SurvivalGames.$("Amount: " + stackSize);
+		SurvivalGames.$("Damage: " + damageValue);
+		SurvivalGames.$("Data: " + dataValue);
+		
+		// Get the meta data so we can update it
+		ItemMeta meta = item.getItemMeta();
+		
+		// Try and set the items name
+		if (itemObject.containsKey("Name")) {
+			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', (String)itemObject.get("Name")));
+			SurvivalGames.$("Name: " + meta.getDisplayName());
+		}
+		/////////////////////////////////////////
+		
+		// Set the item lore
+		if (itemObject.containsKey("Lore")) {
+			ArrayList<String> lore = new ArrayList<String>();
+			
+			JSONArray loreArray = (JSONArray)itemObject.get("Lore");
+			for (Object loreObject : loreArray) {
+				String loreLine = ChatColor.translateAlternateColorCodes('&', (String)loreObject);
+				lore.add(loreLine);
+				SurvivalGames.$("Lore: " + loreLine);
+			}
+			
+			if (!lore.isEmpty()) {
+				meta.setLore(lore);
+			}
+		}
+		/////////////////////////////////////////
+		
+		// Enchantment's
+		if (itemObject.containsKey("Enchantments")) {
+			JSONArray enchantmentArray = (JSONArray)itemObject.get("Enchantments");
+			for (Object enchantmentObject : enchantmentArray) {
+				JSONObject jsonEnchantment = (JSONObject)enchantmentObject;
+				
+				String enchantmentName = (String)jsonEnchantment.get("Name");
+				Long enchantmentLevel = (Long)jsonEnchantment.get("Level");
+				
+				Enchantment enchantment = Enchantment.getByName(enchantmentName);
+				if (enchantment != null && enchantmentLevel != null) {
+					SurvivalGames.$("Enchantment: " + enchantmentName + " : Lvl: " + enchantmentLevel);
+					meta.addEnchant(enchantment, enchantmentLevel.intValue(), true);
+				}
+			}
+		}
+		/////////////////////////////////////////
+
+		item.setItemMeta(meta);
+		return item;
+	}
+
+	public ArrayList<ItemStack> getItems() {
+		
+		Random random = new Random();
+		int noofItems = random.nextInt(5) + 1;
+		
+		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+		
+		int loopSafty = 200 / chests.size();
+		while (noofItems != 0) {
+			
+			Chest chestToUse = null;
+			while (chestToUse == null) {
+				
+				if (loopSafty <= 0) {
+					chestToUse = chests.get(random.nextInt(chests.size()));
+					break;
+				}
+				
+				for (Chest chest : chests) {
+					if (chest.useThisChest(random)) {
+						chestToUse = chest;
+					}
+				}
+				loopSafty--;
+			}
+			
+			items.add(chestToUse.getRandomItem(random));
+			
+			noofItems--;
+		}
+		
 		return items;
 	}
+
 }

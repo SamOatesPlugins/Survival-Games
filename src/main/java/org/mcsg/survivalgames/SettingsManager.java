@@ -25,21 +25,16 @@ public class SettingsManager {
 	private FileConfiguration system;
 	private FileConfiguration kits;
 	private FileConfiguration messages;
-	private FileConfiguration chest;
 
 
 	private File f; //spawns
 	private File f2; //system
-	private File f3; //kits
 	private File f4; //messages
-	private File f5; //chest
+	private File chestFile; //chest
 	
-	private static final int KIT_VERSION = 1;
 	private static final int MESSAGE_VERSION = 1;
-	private static final int CHEST_VERSION = 0;
 	private static final int SPAWN_VERSION = 0;
 	private static final int SYSTEM_VERSION = 0;
-	
 	
 	private SettingsManager() {
 
@@ -63,16 +58,14 @@ public class SettingsManager {
 		
 		f = new File(p.getDataFolder(), "spawns.yml");
 		f2 = new File(p.getDataFolder(), "system.yml");
-		f3 = new File(p.getDataFolder(), "kits.yml");
 		f4 = new File(p.getDataFolder(), "messages.yml");
-		f5 = new File(p.getDataFolder(), "chest.yml");
+		chestFile = new File(p.getDataFolder(), "items.json");
 
 		try {
 			if (!f.exists()) 	f.createNewFile();
 			if (!f2.exists())	f2.createNewFile();
-			if (!f3.exists()) 	loadFile("kits.yml");
 			if (!f4.exists()) 	loadFile("messages.yml");
-			if (!f5.exists()) 	loadFile("chest.yml");
+			if (!chestFile.exists()) 	loadFile("items.json");
 
 		} 
 		catch (Exception e) {
@@ -84,16 +77,9 @@ public class SettingsManager {
 		
 		reloadSpawns();
 		saveSpawns();
-		
-		reloadKits();
-		//saveKits();
-		
-		reloadChest();
-		
+				
 		reloadMessages();
 		saveMessages();
-		
-		
 	}
 
 	public void set(String arg0, Object arg1) {
@@ -116,8 +102,8 @@ public class SettingsManager {
 		return kits;
 	}
 	
-	public FileConfiguration getChest() {
-		return chest;
+	public File getChestFile() {
+		return chestFile;
 	}
 	
 	public FileConfiguration getMessageConfig() {
@@ -180,41 +166,16 @@ public class SettingsManager {
 		system.set("version", SYSTEM_VERSION);
 		saveSystemConfig();
 	}
-
-	public void reloadKits() {
-		kits = YamlConfiguration.loadConfiguration(f3);
-		if(kits.getInt("version", 0) != KIT_VERSION){
-			moveFile(f3);
-			loadFile("kits.yml");
-			reloadKits();
-		}
-
-	}
-	
 	
 	public void reloadMessages() {
 		messages = YamlConfiguration.loadConfiguration(f4);
 		if(messages.getInt("version", 0) != MESSAGE_VERSION){
 			moveFile(f4);
 			loadFile("messages.yml");
-			reloadKits();
 		}
 		messages.set("version", MESSAGE_VERSION);
 		saveMessages();
 	}
-	
-	public void reloadChest() {
-		chest = YamlConfiguration.loadConfiguration(f5);
-		if(chest.getInt("version", 0) != CHEST_VERSION){
-			moveFile(f5);
-			loadFile("chest.yml");
-			reloadKits();
-		}
-	}
-
-
-
-
 
 	public void saveSystemConfig() {
 		try {
@@ -234,15 +195,6 @@ public class SettingsManager {
 		}
 	}
 
-	public void saveKits() {
-		try {
-			kits.save(f3);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public void saveMessages() {
 		try {
 			messages.save(f4);
@@ -253,12 +205,7 @@ public class SettingsManager {
 	}
 	
 	public void saveChest() {
-		try {
-			chest.save(f5);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	}
 
 	public int getSpawnCount(int gameid) {
