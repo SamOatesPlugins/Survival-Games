@@ -1,6 +1,5 @@
 package org.mcsg.survivalgames.events;
 
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,11 +11,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 
-
-
+@SuppressWarnings("deprecation")
 public class DeathEvent implements Listener {
-	
-
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDieEvent(EntityDamageEvent event) {

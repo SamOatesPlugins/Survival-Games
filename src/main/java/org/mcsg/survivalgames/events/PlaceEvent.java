@@ -1,6 +1,5 @@
 package org.mcsg.survivalgames.events;
 
-
 import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
@@ -12,8 +11,7 @@ import org.mcsg.survivalgames.Game;
 import org.mcsg.survivalgames.GameManager;
 import org.mcsg.survivalgames.SettingsManager;
 
-
-
+@SuppressWarnings("deprecation")
 public class PlaceEvent implements Listener {
 
     public  ArrayList<Integer> allowedPlace = new ArrayList<Integer>();
