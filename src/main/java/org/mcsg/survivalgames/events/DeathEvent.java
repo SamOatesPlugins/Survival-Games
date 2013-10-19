@@ -16,24 +16,28 @@ public class DeathEvent implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDieEvent(EntityDamageEvent event) {
-		if(event.getEntity() instanceof Player){}
-		else 
+		if(!(event.getEntity() instanceof Player))
 			return;
+		
 		Player player = (Player)event.getEntity();
 		int gameid = GameManager.getInstance().getPlayerGameId(player);
 		if(gameid==-1)
 			return;
+		
 		if(!GameManager.getInstance().isPlayerActive(player))
 			return;
+		
 		Game game = GameManager.getInstance().getGame(gameid);
-		if(game.getMode() != Game.GameMode.INGAME){
+		if (game.getMode() != Game.GameMode.INGAME) {
 			event.setCancelled(true);
 			return;
 		}
-		if(game.isProtectionOn()){
+		
+		if (game.isProtectionOn()) {
 			event.setCancelled(true);
 			return;
 		}
+		
 		if(player.getHealth() <= event.getDamage()){
 			event.setCancelled(true);
 			player.setHealth(player.getMaxHealth());
@@ -52,15 +56,6 @@ public class DeathEvent implements Listener {
 			}
 
 			GameManager.getInstance().getGame(GameManager.getInstance().getPlayerGameId(player)).killPlayer(player, false);
-
-
-
 		}
 	}
-
-	
-	
-	
-	
-	
 }

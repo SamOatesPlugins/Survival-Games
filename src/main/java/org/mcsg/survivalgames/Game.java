@@ -7,7 +7,9 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -360,6 +362,13 @@ public class Game {
 			}
 			return;
 		} else {
+			
+			for (Entity entity : this.arena.getMax().getWorld().getEntities()) {
+				if (entity instanceof Player)
+					continue;
+				entity.remove();
+			}
+			
 			startTime = new Date().getTime();
 			for (Player pl: activePlayers) {
 				pl.setHealth(pl.getMaxHealth());
@@ -496,8 +505,10 @@ public class Game {
 			}
 			sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
 
-			if (!activePlayers.contains(p)) return;
-			else restoreInv(p);
+			if (!activePlayers.contains(p)) 
+				return;
+			else 
+				restoreInv(p);
 			
 			scoreBoard.removePlayer(p);
 
@@ -592,10 +603,13 @@ public class Game {
 	 * 
 	 */
 	public void playerWin(Player p) {
-		if (GameMode.DISABLED == mode) return;
+		if (GameMode.DISABLED == mode) 
+			return;
+		
 		Player win = activePlayers.get(0);
-		// clearInv(p);
+		World world = win.getWorld();		
 		win.teleport(SettingsManager.getInstance().getLobbySpawn());
+		
 		restoreInv(win);
 		scoreBoard.removePlayer(p);
 		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin","arena-"+gameID, "victim-"+p.getName(), "player-"+win.getName());
@@ -620,7 +634,13 @@ public class Game {
 		loadspawns();
 		LobbyManager.getInstance().updateWall(gameID);
 		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-"+gameID);
-
+		
+		for (Entity entity : world.getEntities()) {
+			if (entity instanceof Player)
+				continue;
+			
+			entity.remove();
+		}
 	}
 
 	public void endGame() {
