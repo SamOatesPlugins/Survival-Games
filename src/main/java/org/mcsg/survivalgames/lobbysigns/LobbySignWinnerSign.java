@@ -20,7 +20,7 @@ public class LobbySignWinnerSign extends LobbySign {
     }
 
     public LobbySignWinnerSign(int gameId) {
-        super(gameId, LobbySignType.Winner);
+        super(gameId, LobbySignType.WinnerSign);
     }
     
     @Override
