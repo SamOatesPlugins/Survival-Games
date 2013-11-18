@@ -324,12 +324,10 @@ public class Game {
 		}
 		vote++;
 		voted.add(pl);
-		msgmgr.sendFMessage(PrefixType.INFO, "game.playervote", pl, "player-"+pl.getName());
+		for(Player p: activePlayers) {
+			msgmgr.sendFMessage(PrefixType.INFO, "game.playervote", p, "player-"+pl.getName());
+		}
 		HookManager.getInstance().runHook("PLAYER_VOTE", "player-"+pl.getName());
-		/*for(Player p: activePlayers){
-            p.sendMessage(ChatColor.AQUA+pl.getName()+" Voted to start the game! "+ Math.round((vote +0.0) / ((getActivePlayers() +0.0)*100)) +"/"+((c.getInt("auto-start-vote")+0.0))+"%");
-        }*/
-		// Bukkit.getServer().broadcastPrefixType((vote +0.0) / (getActivePlayers() +0.0) +"% voted, needs "+(c.getInt("auto-start-vote")+0.0)/100);
 		if ((((vote + 0.0) / (getActivePlayers() +0.0))>=(config.getInt("auto-start-vote")+0.0)/100) && getActivePlayers() > 1) {
 			countdown(config.getInt("auto-start-time"));
 			for (Player p: activePlayers) {
