@@ -465,15 +465,24 @@ public class Game {
 	 */
 
 	public void removePlayer(Player p, boolean b) {
-		p.teleport(SettingsManager.getInstance().getLobbySpawn());
-		///$("Teleporting to lobby");
+
 		if (mode == GameMode.INGAME) {
 			killPlayer(p, b);
 		} else {
+			
+			final Player telePlayer = p;
+			Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
+				@Override
+				public void run() {
+					telePlayer.teleport(SettingsManager.getInstance().getLobbySpawn());
+					restoreInv(telePlayer);
+				}
+			}, 5L);
+			
 			sm.removePlayer(p, gameID);
 			//	if (!b) p.teleport(SettingsManager.getInstance().getLobbySpawn());
 			scoreBoard.removePlayer(p);
-			restoreInv(p);
+			
 			activePlayers.remove(p);
 			inactivePlayers.remove(p);
 			for (Object in : spawns.keySet().toArray()) {
@@ -501,7 +510,13 @@ public class Game {
 		try{
 			clearInv(p);
 			if (!left) {
-				p.teleport(SettingsManager.getInstance().getLobbySpawn());
+				final Player telePlayer = p;
+				Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
+					@Override
+					public void run() {
+						telePlayer.teleport(SettingsManager.getInstance().getLobbySpawn());
+					}
+				}, 5L);
 			}
 			sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
 
@@ -608,9 +623,20 @@ public class Game {
 		
 		Player win = activePlayers.get(0);
 		World world = win.getWorld();		
-		win.teleport(SettingsManager.getInstance().getLobbySpawn());
 		
-		restoreInv(win);
+		final Player telePlayer = win;
+		Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
+			@Override
+			public void run() {
+				telePlayer.teleport(SettingsManager.getInstance().getLobbySpawn());
+				restoreInv(telePlayer);
+				telePlayer.setHealth(telePlayer.getMaxHealth());
+				telePlayer.setFoodLevel(20);
+				telePlayer.setFireTicks(0);
+				telePlayer.setFallDistance(0);
+			}
+		}, 5L);
+
 		scoreBoard.removePlayer(p);
 		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin","arena-"+gameID, "victim-"+p.getName(), "player-"+win.getName());
 
@@ -619,10 +645,6 @@ public class Game {
 		LobbyManager.getInstance().gameEnd(gameID, win);
 
 		clearSpecs();
-		win.setHealth(p.getMaxHealth());
-		win.setFoodLevel(20);
-		win.setFireTicks(0);
-		win.setFallDistance(0);
 
 		sm.playerWin(win, gameID, new Date().getTime() - startTime);
 		sm.saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
