@@ -83,8 +83,6 @@ public class ChestRatioStorage {
 			return null;
 		}
 		
-		SurvivalGames.$("Loading Chest Item...");
-		
 		// amount if specified
 		Long stackSize = 1L;
 				
@@ -94,26 +92,18 @@ public class ChestRatioStorage {
 		
 		// Create the item stack.
 		ItemStack item = new ItemStack(itemMaterial, stackSize.intValue());
-		
-		SurvivalGames.$("Material: " + itemMaterial);
-		SurvivalGames.$("Amount: " + stackSize);
-		
+
 		if (itemObject.containsKey("Damage")) {
 			Long damageValue = (Long)itemObject.get("Damage");
 			short maxDamage = itemMaterial.getMaxDurability();
 			
 			short actualDurability = (short) (((float)maxDamage) * (damageValue.floatValue() / 100.0f));
 			item.setDurability(actualDurability);
-			
-			SurvivalGames.$("maxDamage: " + maxDamage);
-			SurvivalGames.$("damageValue: " + damageValue);
-			SurvivalGames.$("actualDurability: " + actualDurability);
 		}
 		
 		if (itemObject.containsKey("Data")) {
 			Long dataValue = (Long)itemObject.get("Data");
 			item.setDurability(dataValue.shortValue());
-			SurvivalGames.$("Data: " + dataValue);
 		}		
 				
 		// Get the meta data so we can update it
@@ -122,7 +112,6 @@ public class ChestRatioStorage {
 		// Try and set the items name
 		if (itemObject.containsKey("Name")) {
 			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', (String)itemObject.get("Name")));
-			SurvivalGames.$("Name: " + meta.getDisplayName());
 		}
 		/////////////////////////////////////////
 		
@@ -134,7 +123,6 @@ public class ChestRatioStorage {
 			for (Object loreObject : loreArray) {
 				String loreLine = ChatColor.translateAlternateColorCodes('&', (String)loreObject);
 				lore.add(loreLine);
-				SurvivalGames.$("Lore: " + loreLine);
 			}
 			
 			if (!lore.isEmpty()) {
@@ -154,7 +142,6 @@ public class ChestRatioStorage {
 				
 				Enchantment enchantment = Enchantment.getByName(enchantmentName);
 				if (enchantment != null && enchantmentLevel != null) {
-					SurvivalGames.$("Enchantment: " + enchantmentName + " : Lvl: " + enchantmentLevel);
 					meta.addEnchant(enchantment, enchantmentLevel.intValue(), true);
 				}
 			}
@@ -172,20 +159,30 @@ public class ChestRatioStorage {
 		
 		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
 		
-		int loopSafty = 200 / chests.size();
+		Chest commonChest = null;
+		double chance = 0.0;
+		for (Chest chest : chests) {
+			if (chest.getChance() > chance) {
+				chance = chest.getChance();
+				commonChest = chest;
+			}
+		}
+		
+		int loopSafty = 500 / chests.size();
 		while (noofItems != 0) {
 			
 			Chest chestToUse = null;
 			while (chestToUse == null) {
 				
 				if (loopSafty <= 0) {
-					chestToUse = chests.get(random.nextInt(chests.size()));
+					chestToUse = commonChest;
 					break;
 				}
 				
 				for (Chest chest : chests) {
 					if (chest.useThisChest(random)) {
 						chestToUse = chest;
+						break;
 					}
 				}
 				loopSafty--;
