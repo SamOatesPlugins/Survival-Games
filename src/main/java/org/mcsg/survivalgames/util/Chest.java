@@ -17,6 +17,10 @@ public class Chest {
 	public void setChance(double chance) {
 		m_chance = chance;
 	}
+	
+	public double getChance() {
+		return m_chance;
+	}
 
 	public void setContents(List<ItemStack> chestContents) {
 		m_contents = chestContents;
