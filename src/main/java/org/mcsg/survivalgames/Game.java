@@ -371,7 +371,9 @@ public class Game {
 			startTime = new Date().getTime();
 			for (Player pl: activePlayers) {
 				pl.setHealth(pl.getMaxHealth());
-				//clearInv(pl);
+				pl.setFoodLevel(20);
+				pl.setSaturation(20.0f);
+				pl.setExhaustion(0.0f);
 				msgmgr.sendFMessage(PrefixType.INFO, "game.goodluck", pl);
 			}
 			if (config.getBoolean("restock-chest")) {
