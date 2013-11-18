@@ -100,13 +100,12 @@ public class GameScoreboard {
 		this.livingTeam.addPlayer(player);
 		
 		// Set the players score to zero, then increase it
-		Score score = this.sidebarObjective.getScore(player);
+		final Score score = this.sidebarObjective.getScore(player);
 		score.setScore(1);
 		
-		final Objective sidebarObjective = this.sidebarObjective;
-		Bukkit.getScheduler().runTaskLater(GameManager.getInstance().getPlugin(), new Runnable() {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
             public void run() {
-            	sidebarObjective.getScore(player).setScore(0);
+            	score.setScore(0);
             }
         }, 1L);
 		

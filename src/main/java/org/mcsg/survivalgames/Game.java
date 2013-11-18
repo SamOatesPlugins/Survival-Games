@@ -159,6 +159,9 @@ public class Game {
 		if(disabled){
 			MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameenabled", "arena-"+gameID);
 		}
+		
+		this.scoreBoard.reset();
+		
 		disabled = false;
 		int b = (SettingsManager.getInstance().getSpawnCount(gameID) > queue.size()) ? queue.size() : SettingsManager.getInstance().getSpawnCount(gameID);
 		for (int a = 0; a < b; a++) {
@@ -173,8 +176,6 @@ public class Game {
 		LobbyManager.getInstance().updateWall(gameID);
 
 		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamewaiting", "arena-"+gameID);
-		
-		scoreBoard.reset();
 
 	}
 
