@@ -233,13 +233,19 @@ public class Game {
 						spawns.put(a, p);
 						p.setGameMode(org.bukkit.GameMode.SURVIVAL);
 
-						p.teleport(SettingsManager.getInstance().getLobbySpawn());
-						saveInv(p);clearInv(p);	
 						p.teleport(SettingsManager.getInstance().getSpawnPoint(gameID, a));
+						
+						saveInv(p);
+						clearInv(p);	
+						
+						p.setHealth(p.getMaxHealth());
+						p.setFoodLevel(20);
+						
+						p.setExp(0.0f);
+						p.setLevel(3); //TODO: Configurable per pex group
 
-						p.setHealth(p.getMaxHealth());p.setFoodLevel(20);clearInv(p);
-
-						activePlayers.add(p);sm.addPlayer(p, gameID);
+						activePlayers.add(p);
+						sm.addPlayer(p, gameID);
 						
 						scoreBoard.addPlayer(p);
 
@@ -266,7 +272,17 @@ public class Game {
 				return false;
 			}
 			msgFall(PrefixType.INFO, "game.playerjoingame", "player-"+p.getName(), "activeplayers-"+ getActivePlayers(), "maxplayers-"+ SettingsManager.getInstance().getSpawnCount(gameID));
-			if (activePlayers.size() >= config.getInt("auto-start-players") && !countdownRunning) countdown(config.getInt("auto-start-time"));
+			if (activePlayers.size() >= config.getInt("auto-start-players") && !countdownRunning) {
+				countdown(config.getInt("auto-start-time"));
+			}
+			
+			// Remove all entities from the world
+			for (Entity entity : this.arena.getMax().getWorld().getEntities()) {
+				if (entity.getType() != EntityType.PLAYER) {
+					entity.remove();
+				}
+			}
+			
 			return true;
 		} else {
 			if (config.getBoolean("enable-player-queue")) {
