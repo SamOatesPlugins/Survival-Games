@@ -6,8 +6,11 @@ import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -42,7 +45,6 @@ public class Game {
 	private Arena arena;
 	private int gameID;
 	private String name;
-	private int gcount = 0;
 	private FileConfiguration config;
 	private FileConfiguration system;
 	private HashMap < Integer, Player > spawns = new HashMap < Integer, Player > ();
@@ -369,19 +371,27 @@ public class Game {
 			}
 			
 			startTime = new Date().getTime();
+			
+			Color[] colors = new Color[4];
+			colors[0] = Color.RED;
+			colors[1] = Color.GREEN;
+			colors[2] = Color.PURPLE;
+			colors[3] = Color.YELLOW;
+			int colorIndex = 0;
+			
 			for (Player pl: activePlayers) {
 				pl.setHealth(pl.getMaxHealth());
 				pl.setFoodLevel(20);
 				pl.setSaturation(20.0f);
 				pl.setExhaustion(0.0f);
 				msgmgr.sendFMessage(PrefixType.INFO, "game.goodluck", pl);
+				
+				FireworkFactory.LaunchFirework(pl.getLocation(), Type.BALL_LARGE, 2, colors[colorIndex % 4]);
+				colorIndex++;
 			}
 			if (config.getBoolean("restock-chest")) {
 				SettingsManager.getGameWorld(gameID).setTime(0);
-				gcount++;
-				tasks.add(Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
-						new NightChecker(),
-						14400));
+				restockChestTimer(14400);				
 			}
 			if (config.getInt("grace-period") != 0) {
 				for (Player play: activePlayers) {
@@ -406,6 +416,31 @@ public class Game {
 		MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamestarted", "arena-"+gameID);
 
 	}
+	
+	private void restockChestTimer(int delay) {
+		
+		Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
+
+			@Override
+			public void run() {
+				
+				for (Player pl: activePlayers) {
+					msgmgr.sendMessage(PrefixType.INFO, "Chests have been restocked...", pl);
+				}
+				
+				for (Block block : GameManager.openedChest.get(gameID)) {
+					FireworkFactory.LaunchFirework(block.getLocation(), Type.STAR, 3, Color.WHITE);
+				}
+					
+				GameManager.openedChest.get(gameID).clear();
+				
+				restockChestTimer(24000);
+			}
+			
+		}, delay);
+		
+	}
+
 	/*
 	 * 
 	 * ################################################
@@ -873,23 +908,6 @@ public class Game {
 
 	}
 
-
-
-	class NightChecker implements Runnable {
-		boolean reset = false;
-		int tgc = gcount;
-		public void run() {
-			if (SettingsManager.getGameWorld(gameID).getTime() > 14000) {
-				for (Player pl: activePlayers) {
-					msgmgr.sendMessage(PrefixType.INFO, "Chests restocked!", pl);
-				}
-				GameManager.openedChest.get(gameID).clear();
-				reset = true;
-			}
-
-		}
-	}
-
 	class EndgameManager implements Runnable {
 		@Override
 		public void run() {
@@ -901,7 +919,6 @@ public class Game {
 
 		}
 	}
-
 
 	class DeathMatch implements Runnable{
 		public void run(){
