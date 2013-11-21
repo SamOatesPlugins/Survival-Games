@@ -3,32 +3,118 @@
 		{
 			"items": [
 				{
-					"Material": "WOOD_SWORD",
-					"Name": "Flimsy Sword",
-					"Lore": [
-						"This is",
-						"a pretty",
-						"broken sword"
-					],
-					"Damage": 100
+					"Material": "WOOD_SWORD"
 				},
+                {
+					"Material": "LEATHER_HELMET"
+                },
+                {
+					"Material": "LEATHER_CHESTPLATE"
+                },
+                {
+					"Material": "LEATHER_LEGGINGS"
+                },
+                {
+					"Material": "LEATHER_BOOTS"
+                },
+                {
+					"Material": "PORK"
+                },
+                {
+					"Material": "RAW_FISH"
+                },
+                {
+					"Material": "APPLE"
+                },
+                {
+					"Material": "ARROW"
+                },
 				{
-					"Material": "LEATHER_BOOTS",
-					"Enchantments": [
-						{
-							"Name": "PROTECTION",
-							"Level": 2
-						}
-					]
-				}
+					"Material": "STICK"
+                }
 			],
-			"chance": 0.5
+			"chance": 0.75
 		},
 		{
 			"items": [
 				{
-					"Material": "DIAMOND_SWORD",
-					"Name": "But Fucker"
+					"Material": "WOOD_SWORD"
+				},
+				{
+					"Material": "GOLD_HELMET"
+				},
+				{
+					"Material": "GOLD_CHESTPLATE"
+				},
+				{
+					"Material": "GOLD_LEGGINGS"
+				},
+				{
+					"Material": "GOLD_BOOTS"
+				},
+				{
+					"Material": "GRILLED_PORK"
+				},
+				{
+					"Material": "APPLE"
+				},
+				{
+					"Material": "RAW_BEEF"
+				},
+				{
+					"Material": "RAW_CHICKEN"
+				},
+				{
+					"Material": "COOKED_CHICKEN"
+				},
+				{
+					"Material": "ENDER_PEARL"
+				},
+				{
+					"Material": "MUSHROOM_SOUP"
+				}
+			],
+			"chance": 0.1
+		},
+		{
+			"items": [
+				{
+					"Material": "GOLD_SWORD"
+				},
+				{
+					"Material": "IRON_HELMET"
+				},
+				{
+					"Material": "IRON_CHESHPLATE"
+				},
+				{
+					"Material": "IRON_LEGGINGS"
+				},
+				{
+					"Material": "IRON_BOOTS"
+				},
+				{
+					"Material": "CHAINMAIL_HELMET"
+				},
+				{
+					"Material": "CHAINMAIL_CHESTPLATE"
+				},
+				{
+					"Material": "CHAINMAIL_BOOTS"
+				},
+				{
+					"Material": "GOLDEN_APPLE"
+				}
+			],
+			"chance": 0.05
+		},
+		{
+			"items": [
+				{
+					"Material": "IRON_INGOT"
+				},
+				{
+					"Material": "BOW"
 				}
 			],
 			"chance": 0.01
