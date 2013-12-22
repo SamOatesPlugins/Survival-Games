@@ -590,6 +590,7 @@ public class Game {
 					case ENTITY_ATTACK:
 						if(p.getLastDamageCause().getEntityType() == EntityType.PLAYER){
 							Player killer = p.getKiller();
+                                                        scoreBoard.increaseScore(killer);
 							msgFall(PrefixType.INFO, "death."+p.getLastDamageCause().getEntityType(),
 									"player-"+(SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(),
 									"killer-"+((killer != null)?(SurvivalGames.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") 
