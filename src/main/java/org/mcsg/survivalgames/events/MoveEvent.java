@@ -24,13 +24,21 @@ public class MoveEvent implements Listener{
     	final GameMode gameMode = manager.getGameMode(manager.getPlayerGameId(player));
     	
         if (manager.isPlayerActive(player) && gameMode != Game.GameMode.INGAME) {
+        	
+        	final double edgeLimit = 0.3;
+        	
         	final Location from = event.getFrom();
         	final Location to = event.getTo();
-        	final int xDiff = from.getBlockX() - to.getBlockX();
-        	final int zDiff = from.getBlockZ() - to.getBlockZ();
-            
-            if (xDiff + zDiff != 0) {
-            	event.setCancelled(true);
+
+        	final double xDiff = to.getX() - to.getBlockX();
+        	final double zDiff = to.getZ() - to.getBlockZ();
+        	
+            if (xDiff < edgeLimit || xDiff > (1.0 - edgeLimit) ||
+        		zDiff < edgeLimit || zDiff > (1.0 - edgeLimit)) 
+            {
+            	from.setX(from.getBlockX() + 0.5);
+            	from.setZ(from.getBlockZ() + 0.5);
+            	event.setTo(from);
             }
         }
     }
