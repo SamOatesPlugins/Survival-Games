@@ -136,6 +136,11 @@ public class LobbyBoardEvents implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent event) {
+        
+                final Player player = event.getPlayer();
+                if (!player.hasPermission("sg.lobby.createsign")) {
+			return;
+		}
 		
 		Block block = event.getBlock();
 		LobbySignManager signManager = ((SurvivalGames)GameManager.getInstance().getPlugin()).getLobbySignManager();
@@ -145,7 +150,7 @@ public class LobbyBoardEvents implements Listener {
 			return;
 		
 		signManager.removeSign(sign);
-		event.getPlayer().sendMessage("Removed " + sign.getType() + " lobby sign for " + sign.getGame().getName());
+		player.sendMessage("Removed " + sign.getType() + " lobby sign for " + sign.getGame().getName());
 	}
 
 }
