@@ -1,4 +1,4 @@
-package org.mcsg.survivalgames.events;
+    package org.mcsg.survivalgames.events;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,7 +25,7 @@ import org.mcsg.survivalgames.lobbysigns.LobbySignWinnerSign;
 
 public class LobbyBoardEvents implements Listener {
 	
-	@EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
 		
 		// We only care about clicking blocks
