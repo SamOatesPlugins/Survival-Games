@@ -172,7 +172,6 @@ public class ChestRatioStorage {
                             LeatherArmorMeta armourMeta = (LeatherArmorMeta)item.getItemMeta();
                             armourMeta.setColor(dyeColor);
                             item.setItemMeta(armourMeta);
-                            SurvivalGames.$("Colored Item: " + item.getType().name() + " - " + dyeColor.asRGB());
                         } catch (Exception ex) {
                             SurvivalGames.$(Level.WARNING, "Item '" + itemMaterial.name() + "' has color option, but invalid color was specified.", ex);
                         }

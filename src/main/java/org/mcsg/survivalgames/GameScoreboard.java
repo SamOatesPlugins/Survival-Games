@@ -16,6 +16,8 @@ import org.bukkit.scoreboard.Team;
 
 public class GameScoreboard {
 
+    private final static int MAX_PLAYERS = 15;
+    
     private final int gameID;
     
     private final Scoreboard scoreboard;
@@ -113,10 +115,15 @@ public class GameScoreboard {
         }
 
         // Set the players scoreboard, if there are already 15 players show the overveiw board
-        if (this.activePlayers.size() < 16) {
+        if (this.activePlayers.size() <= MAX_PLAYERS) {
             player.setScoreboard(this.scoreboard);
         } else {
-            player.setScoreboard(this.overviewScoreboard);
+            for (String sgPlayerName : this.activePlayers) {
+                Player sgPlayer = Bukkit.getPlayer(sgPlayerName);
+                if (sgPlayer != null) {
+                    sgPlayer.setScoreboard(this.overviewScoreboard);
+                }
+            }
         }
         
         // update the overview objective
@@ -160,7 +167,7 @@ public class GameScoreboard {
         this.activePlayers.remove(player.getName());
 
         // show the per player board if we are down to 15 players
-        if (this.activePlayers.size() == 15) {
+        if (this.activePlayers.size() == MAX_PLAYERS) {
             for (String sgPlayerName : this.activePlayers) {
                 Player sgPlayer = Bukkit.getPlayer(sgPlayerName);
                 if (sgPlayer != null) {
