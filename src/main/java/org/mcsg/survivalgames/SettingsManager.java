@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.mcsg.survivalgames.util.ChestRatioStorage;
 
 public class SettingsManager {
 
@@ -146,6 +147,16 @@ public class SettingsManager {
 		}
 	}
 	
+        public void reloadChestItems() {
+            chestFile = new File(p.getDataFolder(), "items.json");
+            try {
+                if (!chestFile.exists()) 	loadFile("items.json");
+            } catch (Exception ex) {
+                return;
+            }
+            
+            ChestRatioStorage.getInstance().setup();
+        }
 	
 	public void reloadSpawns() {
 		spawns = YamlConfiguration.loadConfiguration(f);

@@ -156,6 +156,10 @@ public class SurvivalGames extends JavaPlugin {
 	public static void $(Level l, String msg){
 		logger.log(l, msg);
 	}
+        
+        public static void $(Level l, String msg, Exception ex) {
+            logger.log(l, msg, ex);
+        }
 
 	public static void debug(String msg){
 		if(SettingsManager.getInstance().getConfig().getBoolean("debug", false))

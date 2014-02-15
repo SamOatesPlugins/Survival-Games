@@ -7,10 +7,12 @@ import java.util.Random;
 import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -48,10 +50,15 @@ public class ChestRatioStorage {
 				ArrayList<ItemStack> chestContents = new ArrayList<ItemStack>();
 				JSONArray contents = (JSONArray) chest.get("items");
 				for (Object itemObject : contents) {
-					ItemStack item = parseChestItem((JSONObject)itemObject);	
-					if (item != null) {
-						chestContents.add(item);
-					}
+                                        try {
+                                            ItemStack item = parseChestItem((JSONObject)itemObject);	
+                                            if (item != null) {
+                                            	chestContents.add(item);
+                                            }
+                                        }
+                                        catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
 				}				
 				
 				Chest newChest = new Chest();
@@ -61,7 +68,7 @@ public class ChestRatioStorage {
 			}
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+                    SurvivalGames.$(Level.WARNING, "Failed To Load Item Config!", ex);
 		}
 		
 	}
@@ -79,7 +86,7 @@ public class ChestRatioStorage {
 			itemMaterial = Material.valueOf((String)itemObject.get("Material"));
 			
 		} catch(Exception ex) {
-			SurvivalGames.$(Level.SEVERE, "Item in chest does not have required material parameter!");
+			SurvivalGames.$(Level.WARNING, "Item in chest does not have required material parameter!");
 			return null;
 		}
 		
@@ -105,6 +112,21 @@ public class ChestRatioStorage {
 			Long dataValue = (Long)itemObject.get("Data");
 			item.setDurability(dataValue.shortValue());
 		}		
+                
+                // if the item is dyable, get the color
+                if (isDyableArmour(itemMaterial)) {
+                    if (itemObject.containsKey("Color")) {
+                        try {
+                            Color dyeColor = Color.fromRGB((Integer)itemObject.get("Color"));
+                            LeatherArmorMeta armourMeta = (LeatherArmorMeta)item.getItemMeta();
+                            armourMeta.setColor(dyeColor);
+                            item.setItemMeta(armourMeta);
+                        } catch (Exception ex) {
+                            SurvivalGames.$(Level.WARNING, "Item '" + itemMaterial.name() + "' has color option, but invalid color was specified.");
+                        }
+                    }
+                }
+                ////////////////////////////////////////
 				
 		// Get the meta data so we can update it
 		ItemMeta meta = item.getItemMeta();
@@ -152,6 +174,10 @@ public class ChestRatioStorage {
 		return item;
 	}
 
+        private boolean isDyableArmour(Material material) {
+            return true;
+        }
+        
 	public ArrayList<ItemStack> getItems() {
 		
 		Random random = new Random();

@@ -17,9 +17,13 @@ import org.bukkit.scoreboard.Team;
 public class GameScoreboard {
 
     private final int gameID;
+    
     private final Scoreboard scoreboard;
     private Objective sidebarObjective = null;
 
+    private final Scoreboard overviewScoreboard;
+    private Objective overviewSidebarObjective = null;
+    
     private final HashMap<String, Scoreboard> originalScoreboard = new HashMap<String, Scoreboard>();
     private final ArrayList<String> activePlayers = new ArrayList<String>();
 
@@ -34,6 +38,7 @@ public class GameScoreboard {
 
         this.gameID = gameID;
         this.scoreboard = cloneScoreBoard(manager, manager.getMainScoreboard());
+        this.overviewScoreboard = cloneScoreBoard(manager, manager.getMainScoreboard());
 
         reset();
     }
@@ -66,7 +71,17 @@ public class GameScoreboard {
         // Create the objective
         this.sidebarObjective = this.scoreboard.registerNewObjective("survivalGames-" + this.gameID, "dummy");
         this.sidebarObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
+        
+        // Unregister the overiew objective
+        if (this.overviewSidebarObjective != null) {
+            this.overviewSidebarObjective.unregister();
+            this.overviewSidebarObjective = null;
+        }
+        
+        // Create the overiew objective
+        this.overviewSidebarObjective = this.overviewScoreboard.registerNewObjective("sgOverview-" + this.gameID, "dummy");
+        this.overviewSidebarObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        
     }
 
     /**
@@ -88,17 +103,29 @@ public class GameScoreboard {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         for (Team team : manager.getMainScoreboard().getTeams()) {
             Team sgTeam = this.scoreboard.getTeam(team.getName());
-            if (sgTeam == null) {
-                continue;   // Should be impossible, but better to be safe
-            }
-            for (OfflinePlayer teamPlayer : team.getPlayers()) {
-                sgTeam.addPlayer(teamPlayer);
+            Team osgTeam = this.overviewScoreboard.getTeam(team.getName());
+            if (sgTeam != null && osgTeam!= null) {
+                for (OfflinePlayer teamPlayer : team.getPlayers()) {
+                    sgTeam.addPlayer(teamPlayer);
+                    osgTeam.addPlayer(teamPlayer);
+                }
             }
         }
 
-        // Set the players scoreboard and andd them too the team
-        player.setScoreboard(this.scoreboard);
-
+        // Set the players scoreboard, if there are already 15 players show the overveiw board
+        if (this.activePlayers.size() < 16) {
+            player.setScoreboard(this.scoreboard);
+        } else {
+            player.setScoreboard(this.overviewScoreboard);
+        }
+        
+        // update the overview objective
+        final Score alivePlayers = this.overviewSidebarObjective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GREEN + "Alive:"));
+        alivePlayers.setScore(alivePlayers.getScore() + 1);
+        
+        final Score deadPlayers = this.overviewSidebarObjective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_RED + "Dead:"));
+        deadPlayers.setScore(1);
+        
         // Set the players score to zero, then increase it
         final Score score = this.sidebarObjective.getScore(player);
         score.setScore(1);
@@ -107,6 +134,7 @@ public class GameScoreboard {
             @Override
             public void run() {
                 score.setScore(0);
+                deadPlayers.setScore(0);
             }
         }, 1L);
 
@@ -131,6 +159,22 @@ public class GameScoreboard {
         }
         this.activePlayers.remove(player.getName());
 
+        // show the per player board if we are down to 15 players
+        if (this.activePlayers.size() == 15) {
+            for (String sgPlayerName : this.activePlayers) {
+                Player sgPlayer = Bukkit.getPlayer(sgPlayerName);
+                if (sgPlayer != null) {
+                    sgPlayer.setScoreboard(this.scoreboard);
+                }
+            }
+        }
+        
+        final Score alivePlayers = this.overviewSidebarObjective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_GREEN + "Alive:"));
+        alivePlayers.setScore(alivePlayers.getScore() - 1);
+        
+        final Score deadPlayers = this.overviewSidebarObjective.getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_RED + "Dead:"));
+        deadPlayers.setScore(deadPlayers.getScore() + 1);
+        
         updateSidebarTitle();
     }
 
@@ -154,6 +198,7 @@ public class GameScoreboard {
         final String gameName = GameManager.getInstance().getGame(gameID).getName();
 
         this.sidebarObjective.setDisplayName(ChatColor.GOLD + gameName + " (" + noofPlayers + "/" + maxPlayers + ")");
+        this.overviewSidebarObjective.setDisplayName(ChatColor.GOLD + gameName + " (" + noofPlayers + "/" + maxPlayers + ")");
     }
 
     /**
