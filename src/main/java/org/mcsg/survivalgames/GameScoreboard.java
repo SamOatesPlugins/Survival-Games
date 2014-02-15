@@ -169,8 +169,6 @@ public class GameScoreboard {
         // Copy teams and players
         for (Team team : from.getTeams()) {
             
-            System.out.println("Copying Team: " + team.getName() + ", Prefix: " + team.getPrefix());
-            
             Team newTeam = to.registerNewTeam(team.getName());
             newTeam.setDisplayName(team.getDisplayName());
             newTeam.setPrefix(team.getPrefix());
@@ -180,7 +178,6 @@ public class GameScoreboard {
             
             for (OfflinePlayer player : team.getPlayers()) {
                 newTeam.addPlayer(player);
-                System.out.println("Adding player: " + player.getName());
             }
         }
         
