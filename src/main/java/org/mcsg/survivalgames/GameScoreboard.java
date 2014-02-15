@@ -187,7 +187,6 @@ public class GameScoreboard {
         // Copy objectives
         for (Objective objective : from.getObjectives()) {
             to.registerNewObjective(objective.getName(), objective.getCriteria());
-            System.out.println("Copying objective: " + objective.getName() + " - " + objective.getCriteria());
         }
         
         return to;
