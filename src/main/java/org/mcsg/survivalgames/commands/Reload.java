@@ -36,6 +36,7 @@ public class Reload implements SubCommand{
 			}
                         else if(args[0].equalsIgnoreCase("items")){
                             SettingsManager.getInstance().reloadChestItems();
+                            MessageManager.getInstance().sendMessage(PrefixType.INFO, "Items Reloaded", player);
                         }
 			else if(args[0].equalsIgnoreCase("games")){	
 				for(Game g:GameManager.getInstance().getGames()){

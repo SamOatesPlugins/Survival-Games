@@ -62,6 +62,8 @@ public class Game {
 	private HashMap < String, String > hookvars = new HashMap < String, String > ();
 	private MessageManager msgmgr = MessageManager.getInstance();
 	private GameScoreboard scoreBoard = null;
+        
+        private int restockChestTimerID = -1;
 
 	public Game(int gameid) {
 		gameID = gameid;
@@ -434,8 +436,8 @@ public class Game {
 	}
 	
 	private void restockChestTimer(int delay) {
-		
-		Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
+            
+		restockChestTimerID = Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
 
 			@Override
 			public void run() {
@@ -673,8 +675,8 @@ public class Game {
 	public void playerWin(Player p) {
 		if (GameMode.DISABLED == mode) 
 			return;
-		
-		Player win = activePlayers.get(0);
+		                
+		Player win = activePlayers.size() != 0 ? activePlayers.get(0) : p;
 		World world = win.getWorld();		
 		
 		final Player telePlayer = win;
@@ -719,6 +721,12 @@ public class Game {
 	}
 
 	public void endGame() {
+                
+                if (restockChestTimerID != -1) {
+                    Bukkit.getScheduler().cancelTask(restockChestTimerID);
+                    restockChestTimerID = -1;
+                }
+            
 		mode = GameMode.WAITING;
 		resetArena();
 		LobbyManager.getInstance().updateWall(gameID);

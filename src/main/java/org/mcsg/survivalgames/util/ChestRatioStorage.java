@@ -34,6 +34,8 @@ public class ChestRatioStorage {
 	
 	public void setup(){
 
+                chests = new ArrayList<Chest>(); // Make new chests
+                
 		File chestFile = SettingsManager.getInstance().getChestFile();
 
 		try {
@@ -86,7 +88,7 @@ public class ChestRatioStorage {
 			itemMaterial = Material.valueOf((String)itemObject.get("Material"));
 			
 		} catch(Exception ex) {
-			SurvivalGames.$(Level.WARNING, "Item in chest does not have required material parameter!");
+			SurvivalGames.$(Level.WARNING, "Failed to get material for '" + (String)itemObject.get("Material") + "'.");
 			return null;
 		}
 		
@@ -96,9 +98,19 @@ public class ChestRatioStorage {
 		if (itemObject.containsKey("Amount")) {
 			stackSize = (Long)itemObject.get("Amount");
 		}
+                
+                Long dataValue = null;
+                if (itemObject.containsKey("Data")) {
+			dataValue = (Long)itemObject.get("Data");
+		}
 		
 		// Create the item stack.
-		ItemStack item = new ItemStack(itemMaterial, stackSize.intValue());
+		ItemStack item = null;
+                if (dataValue == null) {
+                    item = new ItemStack(itemMaterial, stackSize.intValue());
+                } else {
+                    item = new ItemStack(itemMaterial, stackSize.intValue(), dataValue.shortValue());
+                }
 
 		if (itemObject.containsKey("Damage")) {
 			Long damageValue = (Long)itemObject.get("Damage");
@@ -108,26 +120,6 @@ public class ChestRatioStorage {
 			item.setDurability(actualDurability);
 		}
 		
-		if (itemObject.containsKey("Data")) {
-			Long dataValue = (Long)itemObject.get("Data");
-			item.setDurability(dataValue.shortValue());
-		}		
-                
-                // if the item is dyable, get the color
-                if (isDyableArmour(itemMaterial)) {
-                    if (itemObject.containsKey("Color")) {
-                        try {
-                            Color dyeColor = Color.fromRGB((Integer)itemObject.get("Color"));
-                            LeatherArmorMeta armourMeta = (LeatherArmorMeta)item.getItemMeta();
-                            armourMeta.setColor(dyeColor);
-                            item.setItemMeta(armourMeta);
-                        } catch (Exception ex) {
-                            SurvivalGames.$(Level.WARNING, "Item '" + itemMaterial.name() + "' has color option, but invalid color was specified.");
-                        }
-                    }
-                }
-                ////////////////////////////////////////
-				
 		// Get the meta data so we can update it
 		ItemMeta meta = item.getItemMeta();
 		
@@ -171,11 +163,37 @@ public class ChestRatioStorage {
 		/////////////////////////////////////////
 
 		item.setItemMeta(meta);
+                
+                // if the item is dyable, get the color
+                if (isDyableArmour(itemMaterial)) {
+                    if (itemObject.containsKey("Color")) {
+                        try {
+                            Color dyeColor = Color.fromRGB(((Long)itemObject.get("Color")).intValue());
+                            LeatherArmorMeta armourMeta = (LeatherArmorMeta)item.getItemMeta();
+                            armourMeta.setColor(dyeColor);
+                            item.setItemMeta(armourMeta);
+                            SurvivalGames.$("Colored Item: " + item.getType().name() + " - " + dyeColor.asRGB());
+                        } catch (Exception ex) {
+                            SurvivalGames.$(Level.WARNING, "Item '" + itemMaterial.name() + "' has color option, but invalid color was specified.", ex);
+                        }
+                    }
+                }
+                ////////////////////////////////////////
+                
 		return item;
 	}
 
         private boolean isDyableArmour(Material material) {
-            return true;
+            if (material == Material.LEATHER_BOOTS)
+                return true;
+            if (material == Material.LEATHER_CHESTPLATE)
+                return true;
+            if (material == Material.LEATHER_HELMET)
+                return true;
+            if (material == Material.LEATHER_LEGGINGS)
+                return true;
+            
+            return false;
         }
         
 	public ArrayList<ItemStack> getItems() {

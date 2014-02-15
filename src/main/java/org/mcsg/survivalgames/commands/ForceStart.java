@@ -32,11 +32,6 @@ public class ForceStart implements SubCommand {
 			MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notingame", player);
 			return true;
 		}
-		if(GameManager.getInstance().getGame(game).getActivePlayers() < 2){
-			MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notenoughtplayers", player);
-			return true;
-		}
-
 
 		Game g = GameManager.getInstance().getGame(game);
 		if (g.getMode() != Game.GameMode.WAITING && !player.hasPermission("sg.arena.restart")) {
