@@ -43,7 +43,7 @@ public class Join implements SubCommand{
 					MessageManager.getInstance().sendMessage(PrefixType.ERROR, "error.alreadyingame", player);
 					return true;
 				}
-				player.teleport(SettingsManager.getInstance().getLobbySpawn());
+				//player.teleport(SettingsManager.getInstance().getLobbySpawn());
 				return true;
 			}
 			else{

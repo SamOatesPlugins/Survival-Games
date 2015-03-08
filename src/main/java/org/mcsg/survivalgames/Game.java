@@ -16,7 +16,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.mcsg.survivalgames.MessageManager.PrefixType;
 import org.mcsg.survivalgames.api.PlayerJoinArenaEvent;
 import org.mcsg.survivalgames.api.PlayerKilledEvent;
@@ -45,10 +48,14 @@ public class Game {
 	private Arena arena;
 	private int gameID;
 	private String name;
+        private boolean giveNightVision;
 	private FileConfiguration config;
 	private FileConfiguration system;
 	private HashMap < Integer, Player > spawns = new HashMap < Integer, Player > ();
-	private HashMap < Player, ItemStack[][] > inv_store = new HashMap < Player, ItemStack[][] > ();
+	private HashMap < Player, ItemStack[][] > inv_store = new HashMap < Player, ItemStack[][] > ();	
+        private HashMap < Player, Location > location_store = new HashMap < Player, Location > ();
+        private HashMap < Player, Float > xp_store = new HashMap < Player, Float > ();          
+        private HashMap < Player, Integer > level_store = new HashMap < Player, Integer > ();      
 	private int spawnCount = 0;
 	private int vote = 0;
 	private boolean disabled = false;
@@ -100,6 +107,8 @@ public class Game {
 
 		name = system.getString("sg-system.arenas." + gameID + ".name", name);
 		
+                giveNightVision = system.getBoolean("sg-system.arenas." + gameID + ".giveNightVision", false);
+                
 		arena = new Arena(min, max);
 
 		loadspawns();
@@ -235,6 +244,7 @@ public class Game {
 						spawns.put(a, p);
 						p.setGameMode(org.bukkit.GameMode.SURVIVAL);
 
+                                                location_store.put(p, p.getLocation());
 						p.teleport(SettingsManager.getInstance().getSpawnPoint(gameID, a));
 						
 						saveInv(p);
@@ -242,8 +252,11 @@ public class Game {
 						
 						p.setHealth(p.getMaxHealth());
 						p.setFoodLevel(20);
-						
-						p.setExp(0.0f);
+                                                
+                                                xp_store.put(p, p.getExp());
+                                                level_store.put(p, p.getLevel());
+                                                
+                                                p.setExp(0.0f);
 						p.setLevel(3); //TODO: Configurable per pex group
 
 						activePlayers.add(p);
@@ -404,6 +417,10 @@ public class Game {
 				pl.setExhaustion(0.0f);
 				msgmgr.sendFMessage(PrefixType.INFO, "game.goodluck", pl);
 				
+                                if (this.giveNightVision) {
+                                    pl.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 60 * 30, 1, true), true);
+                                }
+                                
 				FireworkFactory.LaunchFirework(pl.getLocation(), Type.BALL_LARGE, 2, colors[colorIndex % 4]);
 				colorIndex++;
 			}
@@ -528,8 +545,14 @@ public class Game {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
 				@Override
 				public void run() {
-					telePlayer.teleport(SettingsManager.getInstance().getLobbySpawn());
-					restoreInv(telePlayer);
+                                    telePlayer.teleport(location_store.get(telePlayer));
+                                    telePlayer.setLevel(level_store.get(telePlayer));
+                                    telePlayer.setExp(xp_store.get(telePlayer));
+                                    restoreInv(telePlayer);
+                                    
+                                    location_store.remove(telePlayer);                                    
+                                    level_store.remove(telePlayer);
+                                    xp_store.remove(telePlayer);
 				}
 			}, 5L);
 			
@@ -550,6 +573,29 @@ public class Game {
 		LobbyManager.getInstance().updateWall(gameID);
 	}
 
+        private String formatItemStackName(ItemStack item) {
+            
+            if (item.hasItemMeta()) {
+                ItemMeta meta = item.getItemMeta();
+                if (meta.hasDisplayName()) {
+                    return meta.getDisplayName();
+                }
+            }
+
+            String[] materialParts = item.getType().name().split("_");
+            String materialName = "";
+            
+            for (String part : materialParts) {
+                materialName = materialName + toProperCase(part);
+            }
+            
+            return materialName;
+        }
+        
+        private String toProperCase(String s) {
+            return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+        }
+        
 	/*
 	 * 
 	 * ################################################
@@ -568,7 +614,13 @@ public class Game {
 				Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
 					@Override
 					public void run() {
-						telePlayer.teleport(SettingsManager.getInstance().getLobbySpawn());
+                                            telePlayer.teleport(location_store.get(telePlayer));
+                                            telePlayer.setLevel(level_store.get(telePlayer));
+                                            telePlayer.setExp(xp_store.get(telePlayer));
+                                            
+                                            location_store.remove(telePlayer);                                    
+                                            level_store.remove(telePlayer);
+                                            xp_store.remove(telePlayer);
 					}
 				}, 5L);
 			}
@@ -597,7 +649,7 @@ public class Game {
 									"player-"+(SurvivalGames.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(),
 									"killer-"+((killer != null)?(SurvivalGames.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") 
 											+ killer.getName():"Unknown"),
-											"item-"+((killer!=null) ? killer.getItemInHand().getType() : "Unknown Item"));
+											"item-"+((killer!=null) ? formatItemStackName(killer.getItemInHand()) : "Unknown Item"));
 							if(killer != null && p != null)
 								sm.addKill(killer, p, gameID);
 							pk = new PlayerKilledEvent(p, this, killer, p.getLastDamageCause().getCause());
@@ -683,17 +735,20 @@ public class Game {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
 			@Override
 			public void run() {
-				telePlayer.teleport(SettingsManager.getInstance().getLobbySpawn());
+				telePlayer.teleport(location_store.get(telePlayer));
+                                telePlayer.setLevel(level_store.get(telePlayer));
+                                telePlayer.setExp(xp_store.get(telePlayer));
+                                
+                                location_store.remove(telePlayer);                                    
+                                level_store.remove(telePlayer);
+                                xp_store.remove(telePlayer);
+                                
 				restoreInv(telePlayer);
-				telePlayer.setHealth(telePlayer.getMaxHealth());
-				telePlayer.setFoodLevel(20);
-				telePlayer.setFireTicks(0);
-				telePlayer.setFallDistance(0);
 			}
 		}, 5L);
 
 		scoreBoard.removePlayer(p);
-		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin","arena-"+gameID, "victim-"+p.getName(), "player-"+win.getName());
+		msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin","arena-"+name, "victim-"+p.getName(), "player-"+win.getName());
 
 		mode = GameMode.FINISHING;
 		LobbyManager.getInstance().updateWall(gameID);
@@ -820,7 +875,7 @@ public class Game {
 		store[1] = p.getInventory().getArmorContents();
 
 		inv_store.put(p, store);
-
+                
 	}
 
 	public void restoreInvOffline(String p) {
@@ -883,7 +938,7 @@ public class Game {
 		p.setHealth(p.getMaxHealth());
 		p.setFoodLevel(20);
 		p.setSaturation(20);
-		p.teleport(SettingsManager.getInstance().getLobbySpawn());
+		p.teleport(location_store.get(p));
 		// Bukkit.getServer().broadcastPrefixType("Removing Spec "+p.getName()+" "+spectators.size()+" left");
 		spectators.remove(p.getName());
 		// Bukkit.getServer().broadcastPrefixType("Removed");
@@ -911,8 +966,19 @@ public class Game {
 			clearInv(p);
 			p.getInventory().setContents(inv_store.get(p)[0]);
 			p.getInventory().setArmorContents(inv_store.get(p)[1]);
+                        
+                        for (PotionEffect effect : p.getActivePotionEffects()) {
+                            p.removePotionEffect(effect.getType());
+                        }
+                        
 			inv_store.remove(p);
 			p.updateInventory();
+                        
+                        p.setHealth(p.getMaxHealth());
+                        p.setFoodLevel(20);
+                        p.setFireTicks(0);
+                        p.setFallDistance(0);
+                        
 		} catch (Exception e) { /*p.sendMessage(ChatColor.RED+"Inentory failed to restore or nothing was in it.");*/
 		}
 	}
